@@ -1,3 +1,5 @@
+check:
+	echo "checkin"
 stdplug_compile_simplewizard:
 	cd frontend && npm run build_stdplug_simplewizard
 	# cp frontend/public/build/plug_simplewizard.js backend/src/stdplugs/simplewizard/exec_script.js && \
