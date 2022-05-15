@@ -50,6 +50,7 @@
     "svelte-simple-modal": "^0.6.1",
     "svelte-split-pane": "^0.1.2",
     "svelte-tooltip": "^1.2.0",
+    "temphia-ui": "https://gitpkg.now.sh/temphia/core/frontend?92369e2",
     "yootils": "0.0.17"
   }
 }
