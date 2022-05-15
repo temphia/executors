@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/temphia/temphia/backend/server/lib/scripter"
+	"github.com/temphia/core/backend/server/lib/scripter"
 )
 
 func (sw *SimpleWizard) execScript(name string, ctxData interface{}, binds map[string]interface{}) error {

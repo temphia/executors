@@ -2,7 +2,7 @@ package simplewizard2
 
 import (
 	"github.com/k0kubun/pp"
-	"github.com/temphia/temphia/backend/server/btypes/easyerr"
+	"github.com/temphia/core/backend/server/btypes/easyerr"
 )
 
 func (sw *SimpleWizard) getStageGroup(group string) *StageGroup {

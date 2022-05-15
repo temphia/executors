@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/rs/xid"
-	"github.com/temphia/temphia/backend/server/btypes/rtypes/event"
+	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 )
 
 func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {

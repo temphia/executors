@@ -3,7 +3,7 @@ package simplewizard2
 import (
 	"encoding/json"
 
-	"github.com/temphia/temphia/backend/server/btypes/rtypes/event"
+	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 )
 
 func (sw *SimpleWizard) GetSplash(ev *event.Request, msg string) (interface{}, error) {

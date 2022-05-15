@@ -1,11 +1,11 @@
-package simpledash
+package dashed
 
 import (
 	"encoding/json"
 	"time"
 
-	"github.com/temphia/temphia/backend/server/btypes/rtypes/event"
-	"github.com/temphia/temphia/backend/stdplugs/simpledash/dashmodels"
+	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/stdplugs/backend/dashed/dashmodels"
 	"github.com/ztrue/tracerr"
 )
 

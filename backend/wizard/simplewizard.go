@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 
 	"github.com/dop251/goja"
-	"github.com/temphia/temphia/backend/server/btypes/easyerr"
-	"github.com/temphia/temphia/backend/server/btypes/rtypes"
-	"github.com/temphia/temphia/backend/server/btypes/rtypes/event"
-	"github.com/temphia/temphia/backend/server/registry"
+	"github.com/temphia/core/backend/server/btypes/easyerr"
+	"github.com/temphia/core/backend/server/btypes/rtypes"
+	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/core/backend/server/registry"
 
 	"github.com/ztrue/tracerr"
 )

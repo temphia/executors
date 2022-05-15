@@ -1,14 +1,15 @@
-package simpledash
+package dashed
 
 import (
 	"io/ioutil"
 	"strings"
 
 	"github.com/goccy/go-yaml"
-	"github.com/temphia/temphia/backend/server/btypes/easyerr"
-	"github.com/temphia/temphia/backend/server/btypes/rtypes"
-	"github.com/temphia/temphia/backend/server/registry"
-	"github.com/temphia/temphia/backend/stdplugs/simpledash/dashmodels"
+	"github.com/temphia/core/backend/server/btypes/easyerr"
+	"github.com/temphia/core/backend/server/btypes/rtypes"
+	"github.com/temphia/core/backend/server/registry"
+
+	"github.com/temphia/stdplugs/backend/dashed/dashmodels"
 	"github.com/ztrue/tracerr"
 )
 
