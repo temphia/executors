@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tailwind from "../../entries/common/_tailwind.svelte";
+  import Tailwind from "../common/_tailwind.svelte";
   import Layout from "./core/layout.svelte";
   import Element from "./elements/element.svelte";
   // import Dashui from "./ref/old/dashui.svelte";

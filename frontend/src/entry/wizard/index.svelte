@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tailwind from "../../entries/common/_tailwind.svelte";
+  import Tailwind from "../common/_tailwind.svelte";
   import Splash from "./pages/splash.svelte";
   import Stage from "./pages/stage.svelte";
   import Final from "./pages/final.svelte";
