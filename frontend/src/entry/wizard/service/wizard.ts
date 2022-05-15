@@ -1,12 +1,12 @@
 import { writable, Writable } from "svelte/store";
-import type { ActionResponse } from "../../../lib/core/engine/env";
-import type { Environment } from "../../../lib/core/engine/plug/plug";
+
+import type { ActionResponse, Environment } from "../../../lib";
 
 // this is the interface element/control will be interacting with
 export interface Store {
   set_value(field: string, val: any): void;
   register_before_submit(fn: () => void): void;
-  
+
   // query_nested(field: string): Promise<any>;
   // verify_nested(field: string, data: any): Promise<any>;
 }

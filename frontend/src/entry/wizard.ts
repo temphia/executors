@@ -1,5 +1,7 @@
-import { FactoryOptions, registerExecLoaderFactory } from "../lib/core/engine/plug/plug";
 import WizardApp from "./wizard/index.svelte"
+import type { FactoryOptions } from "../lib";
+import { registerExecLoaderFactory } from "../lib";
+
 
 
 registerExecLoaderFactory("simplewizard.main", (opts: FactoryOptions) => {
