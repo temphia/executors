@@ -1,1 +1,1 @@
-package wizard
+package simplewizard2
