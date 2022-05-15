@@ -1,10 +1,10 @@
 import { FactoryOptions, registerExecLoaderFactory } from "../lib/core/engine/plug/plug";
-import SimpleWizardApp from "./simplewizard/index.svelte"
+import WizardApp from "./wizard/index.svelte"
 
 
 registerExecLoaderFactory("simplewizard.main", (opts: FactoryOptions) => {
 
-    const __simple_wizard_app__ = new SimpleWizardApp({
+    const __simple_wizard_app__ = new WizardApp({
         target: opts.target,
         props: {
             env: opts.env,

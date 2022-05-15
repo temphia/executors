@@ -9,7 +9,7 @@ import json from "rollup-plugin-json";
 const entryFile = process.env.ENTRY_FILE;
 
 export const config = (prod) => ({
-  input: `src/stdplugs/${entryFile}.ts`,
+  input: `src/entry/${entryFile}.ts`,
   output: {
     sourcemap: true,
     format: "iife",
