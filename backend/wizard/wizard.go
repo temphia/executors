@@ -10,6 +10,8 @@ import (
 	"github.com/temphia/core/backend/server/registry"
 
 	"github.com/ztrue/tracerr"
+
+	_ "embed"
 )
 
 var (
