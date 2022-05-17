@@ -1,4 +1,4 @@
-package simplewizard2
+package wizard
 
 type Wizard struct {
 	Title       string             `json:"title,omitempty"`

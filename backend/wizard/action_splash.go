@@ -1,4 +1,4 @@
-package simplewizard2
+package wizard
 
 import (
 	"encoding/json"

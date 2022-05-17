@@ -1,4 +1,4 @@
-package simplewizard2
+package wizard
 
 const (
 	BASIC_SHORTTEXT    = "basic.shorttext"

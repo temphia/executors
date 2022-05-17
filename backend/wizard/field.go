@@ -1,4 +1,4 @@
-package simplewizard2
+package wizard
 
 const ErrStringFieldEmpty = "Field cannot be empty"
 const ErrStringWrongDataType = "Wrong data type"

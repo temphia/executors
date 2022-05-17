@@ -1,4 +1,4 @@
-package simplewizard2
+package wizard
 
 import "github.com/temphia/core/backend/server/btypes/rtypes/event"
 
