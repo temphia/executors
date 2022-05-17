@@ -1,5 +1,5 @@
 import { writable, Writable } from "svelte/store"
-import type { Environment } from "temphia-ui/src/lib/core/engine/plug/plug"
+import type { Environment } from "../../../lib"
 
 export interface DashOptions {
     env: Environment
