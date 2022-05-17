@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
-	"github.com/temphia/stdplugs/backend/dashed/dashmodels"
+	"github.com/temphia/executors/backend/dashed/dashmodels"
 	"github.com/ztrue/tracerr"
 )
 

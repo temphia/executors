@@ -9,7 +9,7 @@ import (
 	"github.com/temphia/core/backend/server/btypes/rtypes"
 	"github.com/temphia/core/backend/server/registry"
 
-	"github.com/temphia/stdplugs/backend/dashed/dashmodels"
+	"github.com/temphia/executors/backend/dashed/dashmodels"
 	"github.com/ztrue/tracerr"
 )
 
