@@ -7,7 +7,9 @@ require (
 	github.com/goccy/go-yaml v1.9.5
 	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/rs/xid v1.4.0
-	github.com/temphia/core v0.0.0-20220517004452-5037c80c8c3d
+	github.com/temphia/core v0.0.0
 	github.com/thoas/go-funk v0.9.2
 	github.com/ztrue/tracerr v0.3.0
 )
+
+replace github.com/temphia/core => ../core
