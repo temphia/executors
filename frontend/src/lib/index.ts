@@ -1,9 +1,10 @@
 import type {
   FactoryOptions,
+  ActionResponse,
   Environment,
-} from "temphia-ui/src/lib/core/engine/plug/plug";
-import type { ActionResponse } from "temphia-ui/src/lib/core/engine/env";
-import { registerExecLoaderFactory } from "temphia-ui/src/lib/core/engine/plug/plug";
+} from "temphia-ui/dist/cjs/lib/engine";
+
+import { registerExecLoaderFactory } from "temphia-ui/dist/cjs/lib/engine";
 
 export type { ActionResponse, FactoryOptions, Environment };
 export { registerExecLoaderFactory };

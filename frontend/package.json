@@ -30,7 +30,6 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "@temphia/core_js": "file:../packages/temphia_core_js",
     "autoprefixer": "^10.3.3",
     "axios": "^0.21.1",
     "chart.js": "^2.9.4",
@@ -50,7 +49,7 @@
     "svelte-simple-modal": "^0.6.1",
     "svelte-split-pane": "^0.1.2",
     "svelte-tooltip": "^1.2.0",
-    "temphia-ui": "https://gitpkg.now.sh/temphia/core/frontend?92369e2",
+    "temphia-ui": "https://gitpkg.now.sh/temphia/core/frontend?4be4071db41fcd62a7c47524cdd1ce81c832c802",
     "yootils": "0.0.17"
   }
 }
