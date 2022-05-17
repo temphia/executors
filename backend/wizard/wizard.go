@@ -12,6 +12,16 @@ import (
 	"github.com/ztrue/tracerr"
 )
 
+var (
+	//go:embed embed/wizard.loader.js
+	loaderJS []byte
+
+	//go:embed embed/wizard.loader.css
+	loaderCSS []byte
+
+	DevPath = "../executors/frontend/public/build/"
+)
+
 type SimpleWizard struct {
 	model         Wizard
 	binding       rtypes.Bindings

@@ -4,6 +4,8 @@ import {
   FactoryOptions,
 } from "../lib";
 
+// fixme => change to wizard.loader
+
 registerExecLoaderFactory("simplewizard.main", (opts: FactoryOptions) => {
   const __simple_wizard_app__ = new WizardApp({
     target: opts.target,

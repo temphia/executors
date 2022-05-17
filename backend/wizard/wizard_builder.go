@@ -1,6 +1,7 @@
 package wizard
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path"
@@ -19,28 +20,7 @@ func init() {
 	registry.SetExecutor("simple.wizard", &SWBuilder{})
 }
 
-type SWBuilder struct {
-}
-
-func (sd *SWBuilder) Instance(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
-	return New(opts)
-}
-
-func (sd *SWBuilder) ExecFile(file string) ([]byte, error) {
-	if strings.HasSuffix(file, ".css") {
-		return ioutil.ReadFile("frontend/public/build/wizard.css")
-	}
-
-	if strings.HasSuffix(file, ".js") {
-		return ioutil.ReadFile("frontend/public/build/wizard.js")
-	}
-
-	if strings.HasSuffix(file, ".js.map") {
-		return ioutil.ReadFile("frontend/public/build/wizard.js.map")
-	}
-
-	return nil, easyerr.NotFound()
-}
+type SWBuilder struct{}
 
 func New(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 
@@ -68,7 +48,7 @@ func New(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 	}, nil
 }
 
-const fpath = "/backend/stdplugs/simplewizard/sample/"
+const fpath = "../executors/backend/wizard/sample/"
 
 func newDev(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 
@@ -116,4 +96,45 @@ func newDev(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 		nativeScripts: nil,
 	}, nil
 
+}
+
+func (sd *SWBuilder) Instance(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
+	return New(opts)
+}
+
+func (sd *SWBuilder) ExecFile(file string) ([]byte, error) {
+
+	if strings.HasSuffix(file, ".css") {
+		if sd.fileExists(DevPath, "wizard.css") {
+			return sd.serveFile(DevPath, "wizard.css")
+		}
+		return loaderCSS, nil
+	}
+
+	if strings.HasSuffix(file, ".js") {
+		if sd.fileExists(DevPath, "wizard.js") {
+			return sd.serveFile(DevPath, "wizard.js")
+		}
+		return loaderJS, nil
+	}
+
+	if strings.HasSuffix(file, ".js.map") {
+		if sd.fileExists(DevPath, "wizard.js.map") {
+			return sd.serveFile(DevPath, "wizard.js.map")
+		}
+	}
+
+	return nil, easyerr.NotFound()
+}
+
+func (sd *SWBuilder) serveFile(dpath, file string) ([]byte, error) {
+	return ioutil.ReadFile(path.Join("../executors/frontend/public/build/", file))
+}
+
+func (sd *SWBuilder) fileExists(dpath, file string) bool {
+	_, err := os.Stat(path.Join(dpath, file))
+	if err == nil {
+		return true
+	}
+	return !errors.Is(err, os.ErrNotExist)
 }
