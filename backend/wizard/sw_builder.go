@@ -28,11 +28,15 @@ func (sd *SWBuilder) Instance(opts rtypes.ExecutorOption) (rtypes.Executor, erro
 
 func (sd *SWBuilder) ExecFile(file string) ([]byte, error) {
 	if strings.HasSuffix(file, ".css") {
-		return ioutil.ReadFile("frontend/public/build/plug_simplewizard.css")
+		return ioutil.ReadFile("frontend/public/build/wizard.css")
 	}
 
 	if strings.HasSuffix(file, ".js") {
-		return ioutil.ReadFile("frontend/public/build/plug_simplewizard.js")
+		return ioutil.ReadFile("frontend/public/build/wizard.js")
+	}
+
+	if strings.HasSuffix(file, ".js.map") {
+		return ioutil.ReadFile("frontend/public/build/wizard.js.map")
 	}
 
 	return nil, easyerr.NotFound()

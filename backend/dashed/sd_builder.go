@@ -25,15 +25,15 @@ func (sd *SDBuilder) Instance(opts rtypes.ExecutorOption) (rtypes.Executor, erro
 
 func (sd *SDBuilder) ExecFile(file string) ([]byte, error) {
 	if strings.HasSuffix(file, ".js") {
-		return ioutil.ReadFile("frontend/public/build/plug_simpledash.js")
+		return ioutil.ReadFile("frontend/public/build/dashed.js")
 	}
 
 	if strings.HasSuffix(file, ".css") {
-		return ioutil.ReadFile("frontend/public/build/plug_simpledash.css")
+		return ioutil.ReadFile("frontend/public/build/dashed.css")
 	}
 
 	if strings.HasSuffix(file, ".js.map") {
-		return ioutil.ReadFile("frontend/public/build/plug_simpledash.js.map")
+		return ioutil.ReadFile("frontend/public/build/dashed.js.map")
 	}
 
 	return nil, easyerr.NotFound()
