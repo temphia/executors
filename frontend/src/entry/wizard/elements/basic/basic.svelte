@@ -14,7 +14,7 @@
   let name = field["name"];
   let attrs = field["attrs"] || {};
 
-  let options = data_source || {};
+  console.log("@==>", data_source);
 
   let hide_emojipicker = false;
   if (attrs["hide_emojipicker"]) {
@@ -40,14 +40,9 @@
   const onEmoji = (ev) => {
     value = value ? value + ev.detail : ev.detail;
     field_store.set_value(name, value);
-  }
+  };
 
-  const validate = (ev) => {
-
-
-  }
-
-
+  const validate = (ev) => {};
 </script>
 
 <label for={name} class="text-base leading-7 uppercase">{name}</label>
@@ -91,7 +86,7 @@
 {:else if type === Elem.BASIC_SELECT}
   <div class="flex w-full mt-5">
     <select class="w-full p-2" {value} on:change={change}>
-      {#each options || [] as opt}
+      {#each data_source || [] as opt}
         <option value={opt}>{opt}</option>
       {/each}
     </select>
@@ -103,7 +98,7 @@
       style="min-height: 2rem;"
       {...attrs}
     >
-      {#each options as opt}
+      {#each data_source || [] as opt}
         <label>
           <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" />
           {opt}

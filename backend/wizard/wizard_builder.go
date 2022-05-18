@@ -57,7 +57,7 @@ func newDev(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 		return nil, err
 	}
 
-	out, err := os.ReadFile(path.Join(pwd, fpath, "_two.yaml"))
+	out, err := os.ReadFile(path.Join(pwd, fpath, "_all.yaml"))
 	if err != nil {
 		return nil, err
 	}

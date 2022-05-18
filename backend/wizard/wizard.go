@@ -41,6 +41,8 @@ func (s *SimpleWizard) Process(ev *event.Request) (*event.Response, error) {
 		resp, err = s.GetSplash(ev, "")
 	case "run_start":
 		resp, err = s.RunStart(ev)
+	case "run_nested_start":
+		resp, err = s.RunNestedStart(ev)
 	case "run_back":
 		resp, err = s.RunBack(ev)
 	case "run_next":
