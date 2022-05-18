@@ -50,7 +50,7 @@ type Field struct {
 type Source struct {
 	Name      string                 `json:"name,omitempty"`
 	Type      string                 `json:"type,omitempty"`
-	Value     string                 `json:"value,omitempty"`
+	Target    string                 `json:"target,omitempty"`
 	Data      interface{}            `json:"data,omitempty"`
 	ExtraMeta map[string]interface{} `json:"extra_meta,omitempty"`
 
