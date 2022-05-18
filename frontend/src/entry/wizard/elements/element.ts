@@ -5,7 +5,7 @@ import JsonMultiNested from "./json/multi_nested.svelte";
 import JsonSingleInline from "./json/single_inline.svelte";
 import JsonMultiInline from "./json/multi_inline.svelte";
 
-import ImageMultiSelect from "./image/multi_select.svelte";
+import ImageMultiSelect from "./file/multi_select.svelte";
 import ViewParagraph from "./view/paragraph.svelte";
 import * as Elem from "../service/elem_types";
 import BasicElement from "./basic/basic.svelte";
@@ -17,11 +17,11 @@ const AdvElements = {
   [Elem.JSON_SINGLE_SELECT]: JsonSingleSelect,
   [Elem.JSON_SINGLE_INLINE]: JsonSingleInline,
   [Elem.JSON_SINGLE_NESTED]: JsonSingleNested,
-  [Elem.IMAGE_MULTI_SELECT]: ImageMultiSelect,
+  [Elem.IMAGE]: ImageMultiSelect,
 };
 
 const ViewElements = {
-  [Elem.VIEW_PARAGRAPH]: ViewParagraph,
+  [Elem.BASIC_PARAGRAPH]: ViewParagraph,
 };
 
 export { BasicElement, AdvElements, ViewElements };

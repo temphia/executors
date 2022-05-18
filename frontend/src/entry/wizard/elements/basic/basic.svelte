@@ -8,12 +8,19 @@
   export let data: any;
   export let field_store: FieldsStore;
 
-  let value = data === undefined ? data_source : data;
+  let value = data === undefined ? "" : data;
 
   let type = field["type"];
   let name = field["name"];
-  let options = field["options"] || {};
   let attrs = field["attrs"] || {};
+
+  let options = data_source || {};
+
+  let hide_emojipicker = false;
+  if (attrs["hide_emojipicker"]) {
+    hide_emojipicker = true;
+    delete attrs["hide_emojipicker"];
+  }
 
   const change = (ev) => {
     value = ev.target.value;
@@ -48,7 +55,7 @@
       placeholder=""
       {...attrs}
     />
-    {#if !options["hide_emojipicker"]}
+    {#if !hide_emojipicker}
       <EmojiSelector on:emoji={onEmoji} />
     {/if}
   </div>
@@ -61,7 +68,7 @@
       placeholder="write something..."
       {...attrs}
     />
-    {#if !options["hide_emojipicker"]}
+    {#if !hide_emojipicker}
       <EmojiSelector on:emoji={onEmoji} />
     {/if}
   </div>
@@ -77,7 +84,7 @@
 {:else if type === Elem.BASIC_SELECT}
   <div class="flex w-full mt-5">
     <select class="w-full p-2" {value} on:change={change}>
-      {#each field["options"] || [] as opt}
+      {#each options || [] as opt}
         <option value={opt}>{opt}</option>
       {/each}
     </select>
@@ -89,7 +96,7 @@
       style="min-height: 2rem;"
       {...attrs}
     >
-      {#each field["options"] as opt}
+      {#each options as opt}
         <label>
           <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" />
           {opt}
@@ -160,5 +167,7 @@
     class="p-2 shadow w-full rounded-lg bg-gray-100 outline-none focus:bg-gray-200 mr-1 mt-5"
     {...attrs}
   />
+{:else if type === Elem.BASIC_PARAGRAPH}
+  <p>{data_source}</p>
 {/if}
 <span class="font-sans text-sm italic">{field["info"] || ""}</span>
