@@ -1,0 +1,85 @@
+title: All in one
+dev: true
+splash:
+  message: This is the all in one combo.
+  after_validate: script/select_stage_group
+  fields:
+    - proceed_action:
+      name: Action
+      info: "select a action"
+      type: basic.select
+      optional: false
+      options:
+        - xyz
+        - mno
+
+stage_groups:
+  - name: first
+    stages:
+      - basic_1
+      - basic_2
+stages:
+  basic_1:
+    fields:
+      - name: Basic text
+        type: basic.shorttext
+        optional: false
+      - name: Basic Longtext
+        type: basic.longtext
+        optional: false
+      - name: Basic Range
+        type: basic.range
+        optional: false
+      - name: Basic Select
+        type: basic.select
+        optional: false
+        options:
+          - one
+          - two
+          - three
+      - name: Basic Multi Selct
+        type: basic.multiselect
+        optional: false
+        options:
+          - apple
+          - banana
+          - pineapple
+          - mango
+          - orange
+  basic_2:
+    field:
+      - name: Basic Phone
+        type: basic.phone
+        optional: false
+        options:
+          - one
+          - two
+          - three
+      - name: Basic Checkbox
+        type: basic.checkbox
+        optional: false
+      - name: Basic Color
+        type: basic.color
+        optional: false
+      - name: Basic Date
+        type: basic.date
+        optional: false
+      - name: Basic Date Time
+        type: basic.datetime
+        optional: false
+      - name: Basic Email
+        type: basic.email
+        optional: false
+      - name: Basic number
+        type: basic.shorttext
+        optional: false
+      - name: Basic Paragraph
+        type: basic.shorttext
+        optional: false
+
+sources:
+  source1:
+    name: source one
+    type: static
+    value: ""
+    data: [1, 2, 3]

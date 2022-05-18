@@ -10,67 +10,40 @@ export const BASIC_DATE = "basic.date";
 export const BASIC_DATETIME = "basic.datetime";
 export const BASIC_EMAIL = "basic.email";
 export const BASIC_NUMBER = "basic.number";
+export const BASIC_PARAGRAPH = "basic.paragraph";
 
-export const IMAGE_SELECT = "adv.imgselect";
-export const IMAGE_MULTI_SELECT = "adv.multi_imgselect";
+export const SELECT_MONTH = "select.month";
+export const SELECT_WEEK = "select.week";
+export const SELECT_NESTED = "select.nested";
 
-export const JSON_MULTI_SELECT = "adv.jmulti_select";
-export const JSON_MULTI_INLINE = "adv.jmulti_inline";
-export const JSON_MULTI_NESTED = "adv.jmulti_nested";
-export const JSON_SINGLE_SELECT = "adv.jsingle_select";
-export const JSON_SINGLE_INLINE = "adv.jsingle_inline";
-export const JSON_SINGLE_NESTED = "adv.jsingle_nested";
+export const IMAGE = "imaget";
+export const IMAGE_INLINE = "image.inline";
+export const FILE = "file";
+export const FILE_INLINE = "file.inline";
+export const MARKDOWN = "markdown";
+export const MARKDOWN_PREVIEW = "markdown.preview";
+export const SECRET = "secret";
+export const QUESTION = "question";
+export const FULLNAME = "fullname";
 
-export const LOCATION = "adv.location";
+export const JSON_MULTI_SELECT = "json.select";
+export const JSON_MULTI_INLINE = "json.inline";
+export const JSON_MULTI_NESTED = "json.nested";
+export const JSON_SINGLE_SELECT = "json.select";
+export const JSON_SINGLE_INLINE = "json.inline";
+export const JSON_SINGLE_NESTED = "json.nested";
 
+export const LOCAT = "locat";
+export const LOCAT_CIRCLE = "locat.circle";
+export const LOCAT_AREA = "locat.area";
+export const LOCAT_ADDRESS = "locat.addr"; // https://github.com/kelvins/geocoder
+export const HTML = "html";
 
-
-
-export const VIEW_STATICHTML = "view.statichtml";
-export const VIEW_DYNAMICHTML = "view.dynhtml";
-export const VIEW_PARAGRAPH = "view.paragraph";
-export const VIEW_IMAGE = "view.img";
+export const VIEW_IMAGE = "view.image";
 export const VIEW_FILE = "view.file";
-export const VIEW_IMAGE_ALBUM = "view.imgalbum";
-export const VIEW_CHARTJS_GRAPH = "view.chartgraph";
+export const VIEW_CARDS = "view.cards";
+export const VIEW_ALBUM = "view.album";
+export const VIEW_CHARTJS = "view.chartjs";
 export const VIEW_AUTOTABLE = "view.autotable";
 export const VIEW_METRICS_CARD = "view.metrics_card";
 export const VIEW_METRICS_TABLE = "view.metrics_table";
-
-/*
-  //  ref
-  - text
-  - range
-  - tel
-  - checkbox
-  - color
-  - date
-  - email
-  - file
-  - image
-  - month
-  - number
-  - time
-  - url
-  - week
-  - select
-
-  - select_item
-  - location
-  - location_address
-  - fixed_location
-  - rich_text
-  - live_html
-  - rate
-  - select_image
-  - secret_text
-  - fixed_image
-
-
-  ## -view_types
-  - paragraph
-  - markdown
-  - autotable_object
-  - autoview_object
-  - chart
-*/
