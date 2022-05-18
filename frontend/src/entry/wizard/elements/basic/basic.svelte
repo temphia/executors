@@ -37,10 +37,17 @@
     field_store.set_value(name, Number(value));
   };
 
-  function onEmoji(ev) {
+  const onEmoji = (ev) => {
     value = value ? value + ev.detail : ev.detail;
     field_store.set_value(name, value);
   }
+
+  const validate = (ev) => {
+
+
+  }
+
+
 </script>
 
 <label for={name} class="text-base leading-7 uppercase">{name}</label>

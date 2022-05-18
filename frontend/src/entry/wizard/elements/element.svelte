@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AdvElements, BasicElement, ViewElements } from "./element";
+  import { AllElements, BasicElement } from "./element";
   import type { FieldsStore } from "../service";
 
   export let field: object;
@@ -16,28 +16,16 @@
 {#if type.startsWith("basic.")}
   <BasicElement {data} {data_source} {field} field_store={fieldstore} />
 {:else if type.startsWith("adv.")}
-  {#if AdvElements[type]}
+  {#if AllElements[type]}
     <svelte:component
-      this={AdvElements[type]}
+      this={AllElements[type]}
       {data}
       {data_source}
       {field}
       field_store={fieldstore}
     />
   {:else}
-    <div>Adv elem not implemented</div>
-  {/if}
-{:else if type.startsWith("view.")}
-  {#if ViewElements[type]}
-    <svelte:component
-      this={ViewElements[type]}
-      {data}
-      {data_source}
-      {field}
-      field_store={fieldstore}
-    />
-  {:else}
-    <div>View elem not implemented</div>
+    <div>Elem not implemented</div>
   {/if}
 {:else}
   <div>Not implemented</div>

@@ -1,3 +1,4 @@
+export const BASIC = "basic";
 export const BASIC_SHORTTEXT = "basic.shorttext";
 export const BASIC_LONGTEXT = "basic.longtext";
 export const BASIC_RANGE = "basic.range";
@@ -16,10 +17,11 @@ export const SELECT_MONTH = "select.month";
 export const SELECT_WEEK = "select.week";
 export const SELECT_NESTED = "select.nested";
 
-export const IMAGE = "imaget";
+export const IMAGE = "image";
 export const IMAGE_INLINE = "image.inline";
 export const FILE = "file";
 export const FILE_INLINE = "file.inline";
+
 export const MARKDOWN = "markdown";
 export const MARKDOWN_PREVIEW = "markdown.preview";
 export const SECRET = "secret";
