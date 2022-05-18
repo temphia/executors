@@ -112,8 +112,10 @@ export class WizardManager {
     const fields = resp.body["fields"] || [];
     this._opaqueData = resp.body["odata"] || "";
     const stageTitle = resp.body["stage_title"];
+    const data_sources = resp.body["data_sources"] || {};
     this._state.update((old) => ({
       ...old,
+      data_sources,
       epoch: old.epoch + 1,
       fields,
       stageTitle,
