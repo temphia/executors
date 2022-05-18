@@ -4,9 +4,10 @@ splash:
   message: This is the all in one combo.
   after_validate: script/select_stage_group
   fields:
-    - before_start:
-      - name: Basic Paragraph
-        type: basic.shorttext
+    - name: before_start
+      type: basic.shorttext
+      optional: true
+      source: before_start_text
 stage_groups:
   - name: first
     stages:
@@ -70,7 +71,7 @@ stages:
       - name: Select Nested
         type: select.nested
         optional: false
-      
+
 sources:
   before_start_text:
     type: static
@@ -80,15 +81,15 @@ sources:
     data: [1, 2, 3]
   select_options1:
     type: static
-    data: 
+    data:
       - one
       - two
       - three
       - four
       - five
-   select_options2:
+  select_options2:
     type: static
-    data: 
+    data:
       - apple
       - banana
       - pineapple
