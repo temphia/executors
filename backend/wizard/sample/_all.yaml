@@ -35,7 +35,7 @@ stages:
         optional: false
         source: select_options2
   basic_2:
-    field:
+    fields:
       - name: Basic Phone
         type: basic.phone
         optional: false
@@ -59,7 +59,7 @@ stages:
         optional: false
       - name: Basic Paragraph
         type: basic.shorttext
-        optional: false
+        optional: true
   selects_1:
     fields:
       - name: Select Month
