@@ -18,18 +18,9 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 		return nil, err
 	}
 
-	subData := Submission{}
-	err = json.Unmarshal(req.OpaqueData, &subData)
+	subData, err := sw.getSub(req.OpaqueData)
 	if err != nil {
 		return nil, err
-	}
-
-	if subData.Data == nil {
-		subData.Data = make(map[string]map[string]interface{})
-	}
-
-	if subData.SharedVars == nil {
-		subData.SharedVars = make(map[string]interface{})
 	}
 
 	stage := sw.model.Stages[subData.CurrentStage]
@@ -119,7 +110,7 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 			// this should not happen
 			return nil, easyerr.NotFound()
 		case len(group.Stages) - 1:
-			return sw.endStageGroup(group, &subData)
+			return sw.endStageGroup(group, subData)
 		default:
 			nextStage = group.Stages[idx+1]
 			subData.CurrentStage = nextStage
@@ -197,12 +188,12 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 		}
 	}
 
-	err = sw.genSource(stage, &subData, resp.DataSources)
+	err = sw.genSource(stage, subData, resp.DataSources)
 	if err != nil {
 		return nil, err
 	}
 
-	opdata, err := json.Marshal(&subData)
+	opdata, err := sw.updateSub(subData)
 	if err != nil {
 		return nil, err
 	}

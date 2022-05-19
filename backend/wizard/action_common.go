@@ -1,6 +1,8 @@
 package wizard
 
 import (
+	"encoding/json"
+
 	"github.com/k0kubun/pp"
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 )
@@ -64,4 +66,26 @@ func (sw *SimpleWizard) stageIndex(group *StageGroup, stage string) int {
 	}
 
 	return -1
+}
+
+func (sw *SimpleWizard) getSub(opData []byte) (*Submission, error) {
+	subData := Submission{}
+	err := json.Unmarshal(opData, &subData)
+	if err != nil {
+		return nil, err
+	}
+
+	if subData.Data == nil {
+		subData.Data = make(map[string]map[string]interface{})
+	}
+
+	if subData.SharedVars == nil {
+		subData.SharedVars = make(map[string]interface{})
+	}
+
+	return &subData, nil
+}
+
+func (sw *SimpleWizard) updateSub(sdata *Submission) ([]byte, error) {
+	return json.Marshal(sdata)
 }

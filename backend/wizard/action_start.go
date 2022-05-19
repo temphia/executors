@@ -158,7 +158,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		return nil, err
 	}
 
-	opData, err := json.Marshal(&subData)
+	opData, err := sw.updateSub(&subData)
 	if err != nil {
 		return nil, err
 	}
