@@ -2,16 +2,15 @@
   import Layout from "../core/layout.svelte";
   import Processing from "../core/processing.svelte";
   import Element from "../elements/element.svelte";
-  import type { WizardManager } from "../service/wizard";
+  import type { Manager } from "../service/wizard_types";
 
-  export let manager: WizardManager;
-  const store = manager._state;
-  const fieldstore = manager._fieldsStore;
+  export let manager: Manager;
+  const store = manager.get_state();
   const data_sources = $store.data_sources;
 </script>
 
 <Layout
-  title={manager._wizard_title}
+  title={manager.wizard_title}
   showButtons={$store.flowState !== "STAGE_PROCESSING"}
   next={manager.stage_next}
 >
@@ -20,7 +19,11 @@
   {:else}
     {#each $store.fields || [] as field}
       <div class="relative my-4">
-        <Element {field} {fieldstore} {data_sources} />
+        <Element
+          {field}
+          {data_sources}
+          fieldstore={manager.get_field_store(field["name"])}
+        />
       </div>
     {/each}
   {/if}

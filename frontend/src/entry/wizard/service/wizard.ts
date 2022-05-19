@@ -1,41 +1,14 @@
 import { writable, Writable } from "svelte/store";
-
 import type { ActionResponse, Environment } from "../../../lib";
+import { StageStore } from "./stage";
+import type { State, Manager, FieldStore } from "./wizard_types";
 
-// this is the interface element/control will be interacting with
-export interface IStore {
-  set_value(field: string, val: any): void;
-  register_before_submit(fn: () => void): void;
-  
-  // set_validity(filed: string, valid: boolean): void
-  // field_query(field: string, action: string): Promise<any>
-
-  // query_nested(field: string): Promise<any>;
-  // verify_nested(field: string, data: any): Promise<any>;
-}
-
-interface State {
-  stageTitle?: string;
-  final: boolean;
-  flowState:
-    | "NOT_LOADED"
-    | "SPLASH_LOADED"
-    | "STAGE_LOADED"
-    | "STAGE_PROCESSING"
-    | "FINISHED";
-  fields: object[];
-  data_sources: { [_: string]: any };
-  message?: string;
-  epoch: number;
-  errors?: { [_: string]: string };
-}
-
-export class WizardManager {
+export class WizardManager implements Manager {
+  wizard_title?: string;
   _env: Environment;
   _opaqueData?: string;
-  _wizard_title?: string;
   _state: Writable<State>;
-  _fieldsStore: FieldsStore;
+  _stage_Store: StageStore;
   _exec_options?: any;
 
   constructor(env: Environment, opts?: any) {
@@ -50,9 +23,16 @@ export class WizardManager {
 
     this._exec_options = opts;
     this._state.subscribe((state) => console.log("STATE =>", state));
-
-    this._fieldsStore = null;
+    this._stage_Store = null;
   }
+
+  get_state = () => {
+    return this._state;
+  };
+
+  get_field_store = (field: string) => {
+    return this._stage_Store.get_field_store(field);
+  };
 
   init = async () => {
     const resp = await this._env.PreformAction("get_splash", {
@@ -72,9 +52,9 @@ export class WizardManager {
   };
 
   applySplashFields = (resp: ActionResponse) => {
-    this._fieldsStore = new FieldsStore(this);
+    this._stage_Store = new StageStore(this);
 
-    this._wizard_title = resp.body["wizard_title"] || "";
+    this.wizard_title = resp.body["wizard_title"] || "";
     const fields = resp.body["fields"] || [];
     const message = resp.body["message"] || "";
     const data_sources = resp.body["data_sources"] || {};
@@ -89,7 +69,7 @@ export class WizardManager {
   };
 
   splash_next = async () => {
-    const values = this._fieldsStore._get_values();
+    const values = this._stage_Store._get_values();
 
     const resp = await this._env.PreformAction("run_start", {
       data: values,
@@ -108,7 +88,7 @@ export class WizardManager {
   };
 
   applyStageFields = (resp: ActionResponse) => {
-    this._fieldsStore = new FieldsStore(this);
+    this._stage_Store = new StageStore(this);
     const fields = resp.body["fields"] || [];
     this._opaqueData = resp.body["odata"] || "";
     const stageTitle = resp.body["stage_title"];
@@ -124,7 +104,7 @@ export class WizardManager {
   };
 
   stage_next = async () => {
-    const values = this._fieldsStore._get_values();
+    const values = this._stage_Store._get_values();
     this._state.update((old) => ({ ...old, flowState: "STAGE_PROCESSING" }));
 
     const resp = await this._env.PreformAction("run_next", {
@@ -158,47 +138,4 @@ export class WizardManager {
   };
 
   stage_back = async () => {};
-}
-
-export class FieldsStore implements IStore {
-  _manager: WizardManager;
-  _values: { [_: string]: any };
-
-  _eventHandlers: Array<() => void>;
-  constructor(m: WizardManager) {
-    this._manager = m;
-    this._values = new Map();
-    this._eventHandlers = new Array(0);
-  }
-
-  set_value = (field: string, val: any) => {
-    this._values[field] = val;
-  };
-
-  query_nested = async (field: string): Promise<any> => {
-    return null;
-  };
-
-  verify_nested = async (field: string, data: any): Promise<any> => {
-    return null;
-  };
-
-  register_before_submit(fn: () => void) {
-    this._eventHandlers.push(fn);
-  }
-
-  // private
-
-  _apply_event() {
-    this._eventHandlers.forEach((eh) => {
-      eh();
-    });
-  }
-
-  _get_values() {
-    console.log("@====>", this);
-
-    this._apply_event();
-    return this._values;
-  }
 }

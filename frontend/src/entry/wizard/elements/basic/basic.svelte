@@ -1,20 +1,18 @@
 <script lang="ts">
-  import type { FieldsStore } from "../../service";
-  import * as Elem from "../../service/elem_types";
+  import type { FieldStore } from "../../service/wizard_types";
+  import * as Elem from "../../service/wizard_types";
   import EmojiSelector from "svelte-emoji-selector";
 
   export let field: object;
   export let data_source: any;
   export let data: any;
-  export let field_store: FieldsStore;
+  export let field_store: FieldStore;
 
   let value = data === undefined ? "" : data;
 
   let type = field["type"];
   let name = field["name"];
   let attrs = field["attrs"] || {};
-
-  console.log("@==>", data_source);
 
   let hide_emojipicker = false;
   if (attrs["hide_emojipicker"]) {
@@ -24,23 +22,35 @@
 
   const change = (ev) => {
     value = ev.target.value;
-    field_store.set_value(name, value);
+    field_store.set_value(value);
   };
 
   const changeBool = (ev) => {
     value = ev.target.checked;
-    field_store.set_value(name, value);
+    field_store.set_value(value);
   };
 
   const changeNum = (ev) => {
     value = ev.target.checked;
-    field_store.set_value(name, Number(value));
+    field_store.set_value(Number(value));
   };
 
   const onEmoji = (ev) => {
     value = value ? value + ev.detail : ev.detail;
-    field_store.set_value(name, value);
+    field_store.set_value(value);
   };
+
+  let mdata = data || [];
+  const changeMultiSelect = (opt) => () => {
+    if (mdata.includes(opt)) {
+      mdata = [...mdata.filter((v) => v !== opt)];
+    } else {
+      mdata = [...mdata, opt];
+    }
+    field_store.set_value(mdata);
+  };
+
+  $: console.log("@mdata =>", mdata);
 
   const validate = (ev) => {};
 </script>
@@ -100,7 +110,12 @@
     >
       {#each data_source || [] as opt}
         <label>
-          <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" />
+          <input
+            checked={mdata.includes(opt)}
+            type="checkbox"
+            on:change={changeMultiSelect(opt)}
+            class="form-checkbox h-5 w-5 text-gray-600"
+          />
           {opt}
         </label>
       {/each}

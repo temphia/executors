@@ -1,4 +1,4 @@
-import * as Elem from "../service/elem_types";
+import * as Elem from "../service/wizard_types";
 
 import JsonSingleSelect from "./json/single_select.svelte";
 import JsonMultiSelect from "./json/multi_select.svelte";
@@ -9,7 +9,6 @@ import JsonMultiInline from "./json/multi_inline.svelte";
 import Image from "./file/image.svelte";
 import BasicElement from "./basic/basic.svelte";
 
-
 const AllElements = {
   [Elem.JSON_MULTI_SELECT]: JsonMultiSelect,
   [Elem.JSON_MULTI_INLINE]: JsonMultiInline,
@@ -18,7 +17,7 @@ const AllElements = {
   [Elem.JSON_SINGLE_INLINE]: JsonSingleInline,
   [Elem.JSON_SINGLE_NESTED]: JsonSingleNested,
   [Elem.IMAGE]: Image,
-}
+};
 
 const NestableElements = {
   [Elem.JSON_MULTI_SELECT]: JsonMultiSelect,
@@ -26,6 +25,6 @@ const NestableElements = {
   [Elem.JSON_SINGLE_SELECT]: JsonSingleSelect,
   [Elem.JSON_SINGLE_INLINE]: JsonSingleInline,
   [Elem.IMAGE]: Image,
-}
+};
 
 export { BasicElement, AllElements, NestableElements };

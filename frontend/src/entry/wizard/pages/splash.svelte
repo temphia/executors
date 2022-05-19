@@ -1,10 +1,10 @@
 <script lang="ts">
   import Layout from "../core/layout.svelte";
   import Element from "../elements/element.svelte";
-  import type { WizardManager } from "../service";
-  export let manager: WizardManager;
-  const store = manager._state;
-  const fieldstore = manager._fieldsStore;
+
+  import type { Manager } from "../service/wizard_types";
+  export let manager: Manager;
+  const store = manager.get_state();
   const data_sources = $store.data_sources;
 
   const start = () => {
@@ -12,7 +12,7 @@
   };
 </script>
 
-<Layout title={manager._wizard_title} showButtons={false}>
+<Layout title={manager.wizard_title} showButtons={false}>
   {#if $store.message}
     <div class="p-1 border bg-yellow-100 rounded">
       {$store.message}
@@ -21,7 +21,11 @@
 
   {#each $store.fields || [] as field}
     <div class="relative my-4">
-      <Element {field} {fieldstore} {data_sources} />
+      <Element
+        {field}
+        {data_sources}
+        fieldstore={manager.get_field_store(field["name"])}
+      />
     </div>
   {/each}
 

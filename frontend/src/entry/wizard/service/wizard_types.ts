@@ -1,3 +1,41 @@
+import type { Writable } from "svelte/store";
+
+export interface State {
+  stageTitle?: string;
+  final: boolean;
+  flowState:
+    | "NOT_LOADED"
+    | "SPLASH_LOADED"
+    | "STAGE_LOADED"
+    | "STAGE_PROCESSING"
+    | "FINISHED";
+  fields: object[];
+  data_sources: { [_: string]: any };
+  message?: string;
+  epoch: number;
+  errors?: { [_: string]: string };
+}
+
+export interface Manager {
+  wizard_title?: string
+
+  get_state(): Writable<State>;
+  get_field_store(field: string): FieldStore;
+
+  init(): Promise<void>;
+  splash_next(): Promise<void>;
+  stage_next(): Promise<void>;
+  stage_back(): Promise<void>;
+}
+
+export interface FieldStore {
+  set_value(val: any): void;
+  register_before_submit(fn: () => void): void;
+  set_validity(valid: boolean): void;
+  field_query(action: string, data: any): Promise<any>;
+  verify_remote(data: any): Promise<any>;
+}
+
 export const BASIC = "basic";
 export const BASIC_SHORTTEXT = "basic.shorttext";
 export const BASIC_LONGTEXT = "basic.longtext";
