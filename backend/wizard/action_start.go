@@ -5,13 +5,14 @@ import (
 	"fmt"
 
 	"github.com/rs/xid"
+	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 )
 
 func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 
-	data := RequestStart{}
-	err := json.Unmarshal(ev.Data, &data)
+	data1 := RequestStart{}
+	err := json.Unmarshal(ev.Data, &data1)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +39,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 			},
 		}
 
-		err = sw.execScript(sw.model.Splash.BeforeValidate, data, binds)
+		err = sw.execScript(sw.model.Splash.BeforeValidate, data1, binds)
 		if err != nil {
 			return nil, err
 		}
@@ -50,7 +51,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 
 	if !skipValidation {
 		for _, field := range sw.model.Splash.Fields {
-			_, ok := data.Data[field.Name]
+			_, ok := data1.Data[field.Name]
 			if !ok && field.Optional {
 				continue
 			}
@@ -88,7 +89,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 			},
 		}
 
-		err := sw.execScript(sg.BeforeStart, data.Data, binds)
+		err := sw.execScript(sg.BeforeStart, data1.Data, binds)
 		if err != nil {
 			return nil, err
 		}
@@ -111,14 +112,19 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[sg.Stages[0]]
 	}
 
+	return sw.startStage(sg, stage, "", "")
+}
+
+func (sw *SimpleWizard) startStage(group *StageGroup, stage *Stage, parengroup, parenstage string) (interface{}, error) {
+
 	subData := Submission{
 		Id:               xid.New().String(),
-		StageGroup:       sg.Name,
+		StageGroup:       group.Name,
 		CurrentStage:     stage.Name,
 		Data:             make(map[string]map[string]interface{}),
 		SharedVars:       make(map[string]interface{}),
-		ParentStageGroup: "",
-		ParentStage:      "",
+		ParentStageGroup: parengroup,
+		ParentStage:      parenstage,
 		PrevStages:       []string{},
 	}
 
@@ -132,6 +138,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		Ok:          true,
 	}
 
+	eerr := ""
 	if stage.BeforeGenerate != "" {
 		binds := map[string]interface{}{
 			"_wizard_err": func(e string) {
@@ -142,18 +149,18 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 			},
 		}
 
-		err := sw.execScript(sg.BeforeStart, data.Data, binds)
+		err := sw.execScript(group.BeforeStart, nil, binds)
 		if err != nil {
 			return nil, err
 		}
 
 		if eerr != "" {
-			ev.Data = nil
-			return sw.GetSplash(ev, eerr)
+
+			return nil, easyerr.Error(eerr)
 		}
 	}
 
-	err = sw.genSource(stage, &subData, resp.DataSources)
+	err := sw.genSource(stage, &subData, resp.DataSources)
 	if err != nil {
 		return nil, err
 	}

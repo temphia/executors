@@ -204,6 +204,8 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 }
 
 func (sw *SimpleWizard) endStageGroup(group *StageGroup, subData *Submission) (interface{}, error) {
+	// fixme => handle nested stage_group differently
+
 	if group.BeforeEnd == "" {
 		return ResponseFinal{
 			Ok:          true,

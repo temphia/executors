@@ -36,6 +36,15 @@ type Stage struct {
 	BeforeValidate string   `json:"before_validate,omitempty"`
 }
 
+func (s *Stage) getField(name string) *Field {
+	for _, f := range s.Fields {
+		if f.Name == name {
+			return f
+		}
+	}
+	return nil
+}
+
 type Field struct {
 	Name     string                 `json:"name,omitempty"`
 	Info     string                 `json:"info,omitempty"`
@@ -95,6 +104,12 @@ type ResponseStart struct {
 	Ok          bool                   `json:"ok"`
 }
 
+type RequestStartNested struct {
+	ParentOpData []byte      `json:"parent_opdata,omitempty"`
+	Field        string      `json:"field,omitempty"`
+	PrevData     interface{} `json:"data,omitempty"`
+}
+
 type RequestNext struct {
 	Data       map[string]interface{} `json:"data,omitempty"`
 	OpaqueData []byte                 `json:"odata,omitempty"`
@@ -112,9 +127,10 @@ type ResponseNext struct {
 }
 
 type ResponseFinal struct {
-	LastMessage string `json:"last_message,omitempty"`
-	Ok          bool   `json:"ok"`
-	Final       bool   `json:"final"`
+	LastMessage string      `json:"last_message,omitempty"`
+	Ok          bool        `json:"ok"`
+	Final       bool        `json:"final"`
+	FinalData   interface{} `json:"final_data"`
 }
 
 // elements types
