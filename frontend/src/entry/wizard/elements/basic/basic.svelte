@@ -7,6 +7,7 @@
   export let data_source: any;
   export let data: any;
   export let field_store: FieldStore;
+  export let error: string = undefined;
 
   let value = data === undefined ? "" : data;
 
@@ -187,4 +188,9 @@
 {:else if type === Elem.BASIC_PARAGRAPH}
   <p>{data_source}</p>
 {/if}
-<span class="font-sans text-sm italic">{field["info"] || ""}</span>
+
+{#if error}
+  <span class="font-sans text-sm italic text-red-500">{error}</span>
+{:else}
+  <span class="font-sans text-sm italic">{field["info"] || ""}</span>
+{/if}

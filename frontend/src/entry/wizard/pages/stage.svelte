@@ -5,24 +5,26 @@
   import type { Manager } from "../service/wizard_types";
 
   export let manager: Manager;
-  const store = manager.get_state();
-  const data_sources = $store.data_sources;
+  const state = manager.get_state();
+  const data_sources = $state.data_sources;
 </script>
 
 <Layout
   title={manager.wizard_title}
-  showButtons={$store.flowState !== "STAGE_PROCESSING"}
+  showButtons={$state.flowState !== "STAGE_PROCESSING"}
   next={manager.stage_next}
 >
-  {#if $store.flowState === "STAGE_PROCESSING"}
+  {#if $state.flowState === "STAGE_PROCESSING"}
     <Processing />
   {:else}
-    {#each $store.fields || [] as field}
+    {#each $state.fields || [] as field}
       <div class="relative my-4">
         <Element
           {field}
           {data_sources}
+          prev_data={$state.prev_data}
           fieldstore={manager.get_field_store(field["name"])}
+          error={$state.errors[field["name"]]}
         />
       </div>
     {/each}

@@ -5,7 +5,7 @@
   const store = manager._state;
 </script>
 
-<Layout title={manager._wizard_title} showButtons={false}>
+<Layout title={manager.wizard_title} showButtons={false}>
   <div>Wizard Finished</div>
 
   {#if $store.message}

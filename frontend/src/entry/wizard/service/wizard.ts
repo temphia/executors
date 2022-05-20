@@ -1,7 +1,7 @@
 import { writable, Writable } from "svelte/store";
 import type { ActionResponse, Environment } from "../../../lib";
 import { StageStore } from "./stage";
-import type { State, Manager, FieldStore } from "./wizard_types";
+import type { State, Manager } from "./wizard_types";
 
 export class WizardManager implements Manager {
   wizard_title?: string;
@@ -72,8 +72,8 @@ export class WizardManager implements Manager {
     const values = this._stage_Store._get_values();
 
     const resp = await this._env.PreformAction("run_start", {
-      data: values,
-      exec_options: this._exec_options,
+      splash_data: values,
+      start_raw_data: this._exec_options,
     });
     if (!resp.status_ok) {
       console.warn("error starting from splash", resp);
@@ -93,6 +93,9 @@ export class WizardManager implements Manager {
     this._opaqueData = resp.body["odata"] || "";
     const stageTitle = resp.body["stage_title"];
     const data_sources = resp.body["data_sources"] || {};
+    const errors = resp.body["errors"] || {};
+    const prev_data = resp.body["prev_data"];
+
     this._state.update((old) => ({
       ...old,
       data_sources,
@@ -100,6 +103,8 @@ export class WizardManager implements Manager {
       fields,
       stageTitle,
       flowState: "STAGE_LOADED",
+      errors,
+      prev_data,
     }));
   };
 
@@ -123,6 +128,7 @@ export class WizardManager implements Manager {
       this._state.update((old) => ({
         ...old,
         errors,
+        prev_data: values,
         flowState: "STAGE_LOADED",
       }));
       return;
@@ -137,5 +143,7 @@ export class WizardManager implements Manager {
     this.applyStageFields(resp);
   };
 
-  stage_back = async () => {};
+  stage_back = async () => {
+
+  };
 }

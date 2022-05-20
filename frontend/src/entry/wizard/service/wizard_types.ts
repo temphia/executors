@@ -14,6 +14,7 @@ export interface State {
   message?: string;
   epoch: number;
   errors?: { [_: string]: string };
+  prev_data?: {[_: string]: any}
 }
 
 export interface Manager {
