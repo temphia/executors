@@ -32,8 +32,9 @@ type Stage struct {
 	Name           string   `json:"name,omitempty"`
 	Message        string   `json:"message,omitempty"`
 	Fields         []*Field `json:"fields,omitempty"`
-	BeforeGenerate string   `json:"before_generate,omitempty"`
+	BeforeGenerate string   `json:"before_generate,omitempty"` // fixme => allow only "determisnistic" kinds of bindings
 	BeforeValidate string   `json:"before_validate,omitempty"`
+	OnBack         string   `json:"on_back,omitempty"`
 }
 
 func (s *Stage) getField(name string) *Field {
@@ -51,7 +52,6 @@ type Field struct {
 	Type     string                 `json:"type,omitempty"`
 	Pattern  string                 `json:"pattern,omitempty"`
 	Optional bool                   `json:"optional,omitempty"`
-	Options  interface{}            `json:"options,omitempty"`
 	Attrs    map[string]interface{} `json:"attrs,omitempty"`
 	Source   string                 `json:"source,omitempty"`
 }
@@ -71,7 +71,7 @@ type Submission struct {
 	Id               string                            `json:"id,omitempty"`
 	StageGroup       string                            `json:"stage_group,omitempty"`
 	CurrentStage     string                            `json:"curr_stage,omitempty"`
-	Data             map[string]map[string]interface{} `json:"data,omitempty"`
+	Data             map[string]map[string]interface{} `json:"data,omitempty"` // all stage data
 	SharedVars       map[string]interface{}            `json:"shared_vars,omitempty"`
 	ParentStageGroup string                            `json:"parent_stage_group,omitempty"` // incase of nested group
 	ParentStage      string                            `json:"parent_stage,omitempty"`
@@ -90,8 +90,8 @@ type ResponseSplash struct {
 }
 
 type RequestStart struct {
-	Data        map[string]interface{} `json:"data,omitempty"`
-	ExecOptions interface{}            `json:"exec_options,omitempty"`
+	SplashData   map[string]interface{} `json:"splash_data,omitempty"`
+	StartRawData interface{}            `json:"start_raw_data,omitempty"`
 }
 
 type ResponseStart struct {
@@ -100,14 +100,15 @@ type ResponseStart struct {
 	Message     string                 `json:"message,omitempty"`
 	Fields      []*Field               `json:"fields,omitempty"`
 	DataSources map[string]interface{} `json:"data_sources,omitempty"`
+	PrevData    map[string]interface{} `json:"prev_data,omitempty"`
 	OpaqueData  []byte                 `json:"odata,omitempty"`
 	Ok          bool                   `json:"ok"`
 }
 
 type RequestStartNested struct {
-	ParentOpData []byte      `json:"parent_opdata,omitempty"`
-	Field        string      `json:"field,omitempty"`
-	PrevData     interface{} `json:"data,omitempty"`
+	ParentOpaqueData []byte      `json:"parent_odata,omitempty"`
+	Field            string      `json:"field,omitempty"`
+	StartRawData     interface{} `json:"start_raw_data,omitempty"`
 }
 
 type RequestNext struct {
@@ -120,6 +121,7 @@ type ResponseNext struct {
 	Message     string                 `json:"message,omitempty"`
 	Fields      []*Field               `json:"fields,omitempty"`
 	DataSources map[string]interface{} `json:"data_sources,omitempty"`
+	PrevData    map[string]interface{} `json:"prev_data,omitempty"`
 	OpaqueData  []byte                 `json:"odata,omitempty"`
 	Ok          bool                   `json:"ok"`
 	Final       bool                   `json:"final"`
@@ -131,6 +133,21 @@ type ResponseFinal struct {
 	Ok          bool        `json:"ok"`
 	Final       bool        `json:"final"`
 	FinalData   interface{} `json:"final_data"`
+}
+
+type RequestBack struct {
+	OpaqueData []byte `json:"odata,omitempty"`
+}
+
+type ResponseBack struct {
+	StageTitle  string                 `json:"stage_title,omitempty"`
+	Message     string                 `json:"message,omitempty"`
+	Fields      []*Field               `json:"fields,omitempty"`
+	DataSources map[string]interface{} `json:"data_sources,omitempty"`
+	PrevData    map[string]interface{} `json:"prev_data,omitempty"`
+	OpaqueData  []byte                 `json:"odata,omitempty"`
+	Ok          bool                   `json:"ok"`
+	Final       bool                   `json:"final"`
 }
 
 // elements types

@@ -51,7 +51,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 
 	if !skipValidation {
 		for _, field := range sw.model.Splash.Fields {
-			_, ok := data1.Data[field.Name]
+			_, ok := data1.SplashData[field.Name]
 			if !ok && field.Optional {
 				continue
 			}
@@ -89,7 +89,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 			},
 		}
 
-		err := sw.execScript(sg.BeforeStart, data1.Data, binds)
+		err := sw.execScript(sg.BeforeStart, data1.SplashData, binds)
 		if err != nil {
 			return nil, err
 		}
@@ -112,19 +112,14 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[sg.Stages[0]]
 	}
 
-	return sw.startStage(sg, stage, "", "")
-}
-
-func (sw *SimpleWizard) startStage(group *StageGroup, stage *Stage, parengroup, parenstage string) (interface{}, error) {
-
 	subData := Submission{
 		Id:               xid.New().String(),
-		StageGroup:       group.Name,
+		StageGroup:       sg.Name,
 		CurrentStage:     stage.Name,
 		Data:             make(map[string]map[string]interface{}),
 		SharedVars:       make(map[string]interface{}),
-		ParentStageGroup: parengroup,
-		ParentStage:      parenstage,
+		ParentStageGroup: "",
+		ParentStage:      "",
 		PrevStages:       []string{},
 	}
 
@@ -138,7 +133,7 @@ func (sw *SimpleWizard) startStage(group *StageGroup, stage *Stage, parengroup, 
 		Ok:          true,
 	}
 
-	eerr := ""
+	eerr = ""
 	if stage.BeforeGenerate != "" {
 		binds := map[string]interface{}{
 			"_wizard_err": func(e string) {
@@ -149,7 +144,7 @@ func (sw *SimpleWizard) startStage(group *StageGroup, stage *Stage, parengroup, 
 			},
 		}
 
-		err := sw.execScript(group.BeforeStart, nil, binds)
+		err := sw.execScript(sg.BeforeStart, nil, binds)
 		if err != nil {
 			return nil, err
 		}
@@ -160,7 +155,7 @@ func (sw *SimpleWizard) startStage(group *StageGroup, stage *Stage, parengroup, 
 		}
 	}
 
-	err := sw.genSource(stage, &subData, resp.DataSources)
+	err = sw.genSource(stage, &subData, resp.DataSources)
 	if err != nil {
 		return nil, err
 	}
