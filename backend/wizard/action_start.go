@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/rs/xid"
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 )
@@ -112,16 +111,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[sg.Stages[0]]
 	}
 
-	subData := Submission{
-		Id:               xid.New().String(),
-		StageGroup:       sg.Name,
-		CurrentStage:     stage.Name,
-		Data:             make(map[string]map[string]interface{}),
-		SharedVars:       make(map[string]interface{}),
-		ParentStageGroup: "",
-		ParentStage:      "",
-		PrevStages:       []string{},
-	}
+	subData := newSub(sg.Name, stage.Name)
 
 	resp := &ResponseStart{
 		StartStage:  true,

@@ -92,7 +92,7 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 	_currentStage := subData.CurrentStage
 	{
 		subData.Data[subData.CurrentStage] = req.Data
-		subData.PrevStages = append(subData.PrevStages, subData.CurrentStage)
+		subData.VisitedStages = append(subData.VisitedStages, subData.CurrentStage)
 	}
 
 	group := sw.getStageGroup(subData.StageGroup)

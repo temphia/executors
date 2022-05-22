@@ -21,6 +21,10 @@ func (sw *SimpleWizard) RunBack(ev *event.Request) (interface{}, error) {
 		return nil, err
 	}
 
+	if len(sub.VisitedStages) == 0 {
+		panic("cannot back further")
+	}
+
 	pp.Println(sub)
 
 	// json.Unmarshal()

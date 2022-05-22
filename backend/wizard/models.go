@@ -1,5 +1,7 @@
 package wizard
 
+import "github.com/rs/xid"
+
 type Wizard struct {
 	Title       string             `json:"title,omitempty"`
 	Splash      Splash             `json:"splash,omitempty"`
@@ -34,7 +36,7 @@ type Stage struct {
 	Fields         []*Field `json:"fields,omitempty"`
 	BeforeGenerate string   `json:"before_generate,omitempty"` // fixme => allow only "determisnistic" kinds of bindings
 	BeforeValidate string   `json:"before_validate,omitempty"`
-	OnBack         string   `json:"on_back,omitempty"`
+	BeforeBack     string   `json:"before_back,omitempty"`
 }
 
 func (s *Stage) getField(name string) *Field {
@@ -75,7 +77,20 @@ type Submission struct {
 	SharedVars       map[string]interface{}            `json:"shared_vars,omitempty"`
 	ParentStageGroup string                            `json:"parent_stage_group,omitempty"` // incase of nested group
 	ParentStage      string                            `json:"parent_stage,omitempty"`
-	PrevStages       []string                          `json:"prev_stages,omitempty"`
+	VisitedStages    []string                          `json:"visited_stages,omitempty"`
+}
+
+func newSub(group, stage string) Submission {
+	return Submission{
+		Id:               xid.New().String(),
+		StageGroup:       group,
+		CurrentStage:     stage,
+		Data:             make(map[string]map[string]interface{}),
+		SharedVars:       make(map[string]interface{}),
+		ParentStageGroup: "",
+		ParentStage:      "",
+		VisitedStages:    []string{},
+	}
 }
 
 type RequestSplash struct {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/rs/xid"
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 	"github.com/thoas/go-funk"
@@ -119,16 +118,7 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[ngroup.Stages[0]]
 	}
 
-	subData := Submission{
-		Id:               xid.New().String(),
-		StageGroup:       ngroup.Name,
-		CurrentStage:     stage.Name,
-		Data:             make(map[string]map[string]interface{}),
-		SharedVars:       make(map[string]interface{}),
-		ParentStageGroup: "",
-		ParentStage:      "",
-		PrevStages:       []string{},
-	}
+	subData := newSub(ngroup.Name, stage.Name)
 
 	resp := &ResponseStart{
 		StartStage:  true,
