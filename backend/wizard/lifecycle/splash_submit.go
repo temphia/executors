@@ -1,4 +1,4 @@
-package wizard
+package lifecycle
 
 import "github.com/temphia/executors/backend/wizard/wmodels"
 
@@ -26,7 +26,7 @@ func (s *OnSplashSubmit) Execute() error {
 
 func (s *OnSplashSubmit) Bindings() map[string]interface{} {
 
-	b := map[string]interface{}{
+	return map[string]interface{}{
 		"_wizard_set_next_stage_group": func(name string) {
 			s.SideEffect.NextGroup = name
 		},
@@ -38,7 +38,4 @@ func (s *OnSplashSubmit) Bindings() map[string]interface{} {
 			s.SideEffect.SkipValidation = skip
 		},
 	}
-
-	return b
-
 }

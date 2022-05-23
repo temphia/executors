@@ -1,4 +1,4 @@
-package wizard
+package lifecycle
 
 type LifecCycle interface {
 	Bindings() map[string]interface{}

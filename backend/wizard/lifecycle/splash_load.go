@@ -1,4 +1,4 @@
-package wizard
+package lifecycle
 
 import "github.com/temphia/executors/backend/wizard/wmodels"
 
@@ -22,7 +22,7 @@ func (s *OnSplashLoad) Execute() error {
 }
 
 func (s *OnSplashLoad) Bindings() map[string]interface{} {
-	b := map[string]interface{}{
+	return map[string]interface{}{
 		"_wizard_set_err": func(err string) {
 			s.SideEffect.FailErr = err
 		},
@@ -31,5 +31,4 @@ func (s *OnSplashLoad) Bindings() map[string]interface{} {
 			s.SideEffect.SkipSplash = skip
 		},
 	}
-	return b
 }
