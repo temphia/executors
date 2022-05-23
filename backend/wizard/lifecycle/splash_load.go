@@ -3,11 +3,12 @@ package wizard
 import "github.com/temphia/executors/backend/wizard/wmodels"
 
 type OnSplashLoad struct {
-	Models *wmodels.Wizard
+	Models     *wmodels.Wizard
+	SideEffect OnSplashLoadSideEffect
 }
 
 type OnSplashLoadSideEffect struct {
-	Err        string
+	FailErr    string
 	SkipSplash bool
 }
 
@@ -20,4 +21,15 @@ func (s *OnSplashLoad) Execute() error {
 	return nil
 }
 
-// private
+func (s *OnSplashLoad) Bindings() map[string]interface{} {
+	b := map[string]interface{}{
+		"_wizard_set_err": func(err string) {
+			s.SideEffect.FailErr = err
+		},
+
+		"_wizard_set_skip_splash": func(skip bool) {
+			s.SideEffect.SkipSplash = skip
+		},
+	}
+	return b
+}
