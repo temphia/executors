@@ -6,6 +6,7 @@ import (
 
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 	"github.com/thoas/go-funk"
 )
 
@@ -13,7 +14,7 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 
 	// fixme => handle prevdata properly / edit through nested
 
-	data := RequestStartNested{}
+	data := wmodels.RequestStartNested{}
 
 	err := json.Unmarshal(ev.Data, &data)
 	if err != nil {
@@ -43,7 +44,7 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 		panic("Empty parent stage to start nested stage")
 	}
 
-	field := pstage.getField(data.Field)
+	field := pstage.GetField(data.Field)
 	if field == nil {
 		panic("field not found, to start nested stage")
 	}
@@ -106,7 +107,7 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 		return nil, easyerr.Error(eerr)
 	}
 
-	var stage *Stage
+	var stage *wmodels.Stage
 
 	if nextStage != "" {
 		_stage, ok := sw.model.Stages[nextStage]
@@ -118,9 +119,9 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[ngroup.Stages[0]]
 	}
 
-	subData := newSub(ngroup.Name, stage.Name)
+	subData := wmodels.NewSub(ngroup.Name, stage.Name)
 
-	resp := &ResponseStart{
+	resp := &wmodels.ResponseStart{
 		StartStage:  true,
 		StageTitle:  stage.Name,
 		Message:     stage.Message,

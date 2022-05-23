@@ -6,12 +6,13 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 	"github.com/thoas/go-funk"
 )
 
 func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 
-	req := RequestNext{}
+	req := wmodels.RequestNext{}
 
 	err := json.Unmarshal(ev.Data, &req)
 	if err != nil {
@@ -83,7 +84,7 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 	}
 
 	if len(errors) > 0 {
-		return ResponseNext{
+		return wmodels.ResponseNext{
 			Errors: errors,
 			Ok:     false,
 		}, nil
@@ -122,12 +123,20 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 		}
 	}
 
-	nstage := sw.model.Stages[nextStage]
+	return nil, nil
+
+}
+
+func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGroup, nStage string) (interface{}, error) {
+
+	nstage := sw.model.Stages[nStage]
 	if nstage == nil {
-		pp.Println("@next_stage", nextStage)
+		pp.Println("@next_stage", nStage)
 		pp.Println("@all_stage", sw.model.Stages)
 		return nil, easyerr.NotFound()
 	}
+
+	eerr := ""
 
 	if group.OnNext != "" {
 		binds := map[string]interface{}{
@@ -136,27 +145,29 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 			},
 
 			"_wizard_set_shared_var": func(name string, data interface{}) {
-				subData.SharedVars[name] = data
+				sub.SharedVars[name] = data
 			},
 			"_wizard_get_shared_var": func(name string) interface{} {
-				return subData.SharedVars[name]
+				return sub.SharedVars[name]
 			},
 			"_wizard_get_stage_data": func(name string) interface{} {
-				return subData.Data[name]
+				return sub.Data[name]
 			},
 		}
 
-		err := sw.execScript(stage.BeforeValidate, nil, binds)
+		err := sw.execScript(nstage.BeforeValidate, nil, binds)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	resp := ResponseNext{
+	pp.Println(eerr)
+
+	resp := wmodels.ResponseNext{
 		StageTitle:  nstage.Name,
 		Fields:      nstage.Fields,
 		DataSources: make(map[string]interface{}),
-		Message:     stage.Message,
+		Message:     nstage.Message,
 		OpaqueData:  nil,
 		Ok:          true,
 		Final:       false,
@@ -171,29 +182,29 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 				resp.DataSources[name] = data
 			},
 			"_wizard_set_shared_var": func(name string, data interface{}) {
-				subData.SharedVars[name] = data
+				sub.SharedVars[name] = data
 			},
 			"_wizard_get_shared_var": func(name string) interface{} {
-				return subData.SharedVars[name]
+				return sub.SharedVars[name]
 			},
 			"_wizard_get_stage_data": func(name string) interface{} {
-				return subData.Data[name]
+				return sub.Data[name]
 			},
 		}
 
 		// fixme => pass proper ctx to method
-		err := sw.execScript(stage.BeforeValidate, nil, binds)
+		err := sw.execScript(nstage.BeforeValidate, nil, binds)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	err = sw.genSource(stage, subData, resp.DataSources)
+	err := sw.genSource(nstage, sub, resp.DataSources)
 	if err != nil {
 		return nil, err
 	}
 
-	opdata, err := sw.updateSub(subData)
+	opdata, err := sw.updateSub(sub)
 	if err != nil {
 		return nil, err
 	}
@@ -201,13 +212,14 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 	resp.OpaqueData = opdata
 
 	return resp, nil
+
 }
 
-func (sw *SimpleWizard) endStageGroup(group *StageGroup, subData *Submission) (interface{}, error) {
+func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodels.Submission) (interface{}, error) {
 	// fixme => handle nested stage_group differently
 
 	if group.BeforeEnd == "" {
-		return ResponseFinal{
+		return wmodels.ResponseFinal{
 			Ok:          true,
 			LastMessage: group.LastMessage,
 			Final:       true,
@@ -246,14 +258,14 @@ func (sw *SimpleWizard) endStageGroup(group *StageGroup, subData *Submission) (i
 	}
 
 	if eerr != "" {
-		return ResponseFinal{
+		return wmodels.ResponseFinal{
 			LastMessage: msg,
 			Ok:          false,
 			Final:       true,
 		}, nil
 	}
 
-	return ResponseFinal{
+	return wmodels.ResponseFinal{
 		Ok:          true,
 		LastMessage: msg,
 		Final:       true,

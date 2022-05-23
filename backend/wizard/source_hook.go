@@ -6,17 +6,18 @@ import (
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 )
 
 type SourceCtx struct {
 	Binding      rtypes.Bindings
 	Event        *event.Request
-	Model        *Wizard
+	Model        *wmodels.Wizard
 	Field        string
 	Stage        string
 	SharedVars   map[string]interface{}
 	PreviousData map[string]map[string]interface{}
-	Source       *Source
+	Source       *wmodels.Source
 }
 
 func (ctx *SourceCtx) Process() (interface{}, error) {

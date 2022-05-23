@@ -5,9 +5,11 @@ import (
 
 	"github.com/k0kubun/pp"
 	"github.com/temphia/core/backend/server/btypes/easyerr"
+	"github.com/temphia/executors/backend/wizard/wmodels"
+	"github.com/thoas/go-funk"
 )
 
-func (sw *SimpleWizard) getStageGroup(group string) *StageGroup {
+func (sw *SimpleWizard) getStageGroup(group string) *wmodels.StageGroup {
 	for _, grp := range sw.model.StageGroups {
 		if group != grp.Name {
 			continue
@@ -18,7 +20,7 @@ func (sw *SimpleWizard) getStageGroup(group string) *StageGroup {
 	return nil
 }
 
-func (sw *SimpleWizard) genSource(stage *Stage, subData *Submission, psData map[string]interface{}) error {
+func (sw *SimpleWizard) genSource(stage *wmodels.Stage, subData *wmodels.Submission, psData map[string]interface{}) error {
 	for _, field := range stage.Fields {
 		if field.Source == "" {
 			continue
@@ -58,18 +60,12 @@ func (sw *SimpleWizard) genSource(stage *Stage, subData *Submission, psData map[
 
 }
 
-func (sw *SimpleWizard) stageIndex(group *StageGroup, stage string) int {
-	for idx, s := range group.Stages {
-		if stage == s {
-			return idx
-		}
-	}
-
-	return -1
+func (sw *SimpleWizard) stageIndex(group *wmodels.StageGroup, stage string) int {
+	return funk.IndexOfString(group.Stages, stage)
 }
 
-func (sw *SimpleWizard) getSub(opData []byte) (*Submission, error) {
-	subData := Submission{}
+func (sw *SimpleWizard) getSub(opData []byte) (*wmodels.Submission, error) {
+	subData := wmodels.Submission{}
 	err := json.Unmarshal(opData, &subData)
 	if err != nil {
 		return nil, err
@@ -86,6 +82,6 @@ func (sw *SimpleWizard) getSub(opData []byte) (*Submission, error) {
 	return &subData, nil
 }
 
-func (sw *SimpleWizard) updateSub(sdata *Submission) ([]byte, error) {
+func (sw *SimpleWizard) updateSub(sdata *wmodels.Submission) ([]byte, error) {
 	return json.Marshal(sdata)
 }

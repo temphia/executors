@@ -6,11 +6,12 @@ import (
 
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 )
 
 func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 
-	data1 := RequestStart{}
+	data1 := wmodels.RequestStart{}
 	err := json.Unmarshal(ev.Data, &data1)
 	if err != nil {
 		return nil, err
@@ -61,7 +62,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		}
 	}
 
-	var sg *StageGroup
+	var sg *wmodels.StageGroup
 	if nextStageGroup != "" {
 		for _, _sg := range sw.model.StageGroups {
 			if _sg.Name == nextStageGroup {
@@ -99,7 +100,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		return sw.GetSplash(ev, eerr)
 	}
 
-	var stage *Stage
+	var stage *wmodels.Stage
 
 	if nextStage != "" {
 		_stage, ok := sw.model.Stages[nextStage]
@@ -111,9 +112,9 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[sg.Stages[0]]
 	}
 
-	subData := newSub(sg.Name, stage.Name)
+	subData := wmodels.NewSub(sg.Name, stage.Name)
 
-	resp := &ResponseStart{
+	resp := &wmodels.ResponseStart{
 		StartStage:  true,
 		StageTitle:  stage.Name,
 		Message:     stage.Message,

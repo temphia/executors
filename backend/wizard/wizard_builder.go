@@ -13,6 +13,7 @@ import (
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes"
 	"github.com/temphia/core/backend/server/registry"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 	"github.com/ztrue/tracerr"
 )
 
@@ -33,7 +34,7 @@ func New(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 		return nil, tracerr.Wrap(err)
 	}
 
-	model := Wizard{}
+	model := wmodels.Wizard{}
 
 	err = yaml.Unmarshal(out, &model)
 	if err != nil {
@@ -67,7 +68,7 @@ func newDev(opts rtypes.ExecutorOption) (rtypes.Executor, error) {
 		hookjs = []byte(``)
 	}
 
-	model := Wizard{}
+	model := wmodels.Wizard{}
 
 	err = yaml.Unmarshal(out, &model)
 	if err != nil {

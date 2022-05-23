@@ -1,9 +1,11 @@
 package wizard
 
+import "github.com/temphia/executors/backend/wizard/wmodels"
+
 const ErrStringFieldEmpty = "Field cannot be empty"
 const ErrStringWrongDataType = "Wrong data type"
 
-func (sw *SimpleWizard) validateField(field *Field, data interface{}) string {
+func (sw *SimpleWizard) validateField(field *wmodels.Field, data interface{}) string {
 
 	if data == nil {
 		if field.Optional {
@@ -14,7 +16,7 @@ func (sw *SimpleWizard) validateField(field *Field, data interface{}) string {
 	}
 
 	switch field.Type {
-	case BASIC_SHORTTEXT, BASIC_LONGTEXT, BASIC_SELECT:
+	case wmodels.BASIC_SHORTTEXT, wmodels.BASIC_LONGTEXT, wmodels.BASIC_SELECT:
 
 		dstr, ok := data.(string)
 		if !ok {
@@ -24,17 +26,17 @@ func (sw *SimpleWizard) validateField(field *Field, data interface{}) string {
 		if len(dstr) == 0 {
 			return ErrStringFieldEmpty
 		}
-	case BASIC_EMAIL:
+	case wmodels.BASIC_EMAIL:
 
-	case BASIC_RANGE:
-	case BASIC_MULTI_SELECT:
-	case BASIC_PHONE:
-	case BASIC_CHECKBOX:
-	case BASIC_COLOR:
-	case BASIC_DATE:
-	case BASIC_DATETIME:
+	case wmodels.BASIC_RANGE:
+	case wmodels.BASIC_MULTI_SELECT:
+	case wmodels.BASIC_PHONE:
+	case wmodels.BASIC_CHECKBOX:
+	case wmodels.BASIC_COLOR:
+	case wmodels.BASIC_DATE:
+	case wmodels.BASIC_DATETIME:
 
-	case BASIC_NUMBER:
+	case wmodels.BASIC_NUMBER:
 
 	}
 

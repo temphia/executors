@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 )
 
 func (sw *SimpleWizard) GetSplash(ev *event.Request, msg string) (interface{}, error) {
-	req := RequestSplash{}
+	req := wmodels.RequestSplash{}
 
 	if ev.Data != nil {
 		err := json.Unmarshal(ev.Data, &req)
@@ -17,7 +18,7 @@ func (sw *SimpleWizard) GetSplash(ev *event.Request, msg string) (interface{}, e
 	}
 
 	if req.HasExecData {
-		return ResponseSplash{
+		return wmodels.ResponseSplash{
 			WizardTitle: sw.model.Title,
 			Message:     msg,
 			SkipSplash:  true,
@@ -26,7 +27,7 @@ func (sw *SimpleWizard) GetSplash(ev *event.Request, msg string) (interface{}, e
 
 	// fixme => before_generate
 
-	return ResponseSplash{
+	return wmodels.ResponseSplash{
 		WizardTitle: sw.model.Title,
 		Message:     msg,
 		Fields:      sw.model.Splash.Fields,

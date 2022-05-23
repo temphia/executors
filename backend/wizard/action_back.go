@@ -5,11 +5,13 @@ import (
 
 	"github.com/k0kubun/pp"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/wmodels"
+	"github.com/thoas/go-funk"
 )
 
 func (sw *SimpleWizard) RunBack(ev *event.Request) (interface{}, error) {
 
-	req := RequestBack{}
+	req := wmodels.RequestBack{}
 
 	err := json.Unmarshal(ev.Data, &req)
 	if err != nil {
@@ -25,7 +27,18 @@ func (sw *SimpleWizard) RunBack(ev *event.Request) (interface{}, error) {
 		panic("cannot back further")
 	}
 
-	pp.Println(sub)
+	nextstage := ""
+	currIndex := funk.IndexOfString(sub.VisitedStages, sub.CurrentStage)
+	switch currIndex {
+	case -1:
+		nextstage = sub.VisitedStages[len(sub.VisitedStages)-1]
+	case 0:
+		nextstage = sub.CurrentStage
+	default:
+		nextstage = sub.VisitedStages[currIndex-1]
+	}
+
+	pp.Println(sub, nextstage)
 
 	// json.Unmarshal()
 

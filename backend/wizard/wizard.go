@@ -8,6 +8,7 @@ import (
 	"github.com/temphia/core/backend/server/btypes/rtypes"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 	"github.com/temphia/core/backend/server/registry"
+	"github.com/temphia/executors/backend/wizard/wmodels"
 
 	"github.com/ztrue/tracerr"
 
@@ -25,7 +26,7 @@ var (
 )
 
 type SimpleWizard struct {
-	model         Wizard
+	model         wmodels.Wizard
 	binding       rtypes.Bindings
 	jsRuntime     *goja.Runtime
 	nativeScripts map[string]registry.DynamicScript
