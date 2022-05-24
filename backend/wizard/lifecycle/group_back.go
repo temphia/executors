@@ -15,6 +15,9 @@ type BeforeBackSideEffects struct {
 type BeforeBackCtx struct {
 	Type         string
 	CurrentStage string
+	CurrentGroup string
+	ParentGroup  string
+	ParentStage  string
 }
 
 func (b *BeforeBack) Execute() error { return nil }

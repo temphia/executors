@@ -38,6 +38,9 @@ func (s *StageBeforeGenerate) Bindings() map[string]interface{} {
 		"_wizard_get_stage_data": func(name string) interface{} {
 			return s.SubData.Data[name]
 		},
+		"_wizard_get_data_source": func(name string) interface{} {
+			return s.SideEffect.DataSources[name]
+		},
 		"_wizard_set_data_source": func(name string, data interface{}) {
 			s.SideEffect.DataSources[name] = data
 		},
@@ -50,14 +53,20 @@ func (s *StageBeforeGenerate) Bindings() map[string]interface{} {
 type StageAfterGenerate struct {
 	Models     *wmodels.Wizard
 	SideEffect StageAfterGenerateEffect
+	SubData    *wmodels.Submission
 }
 
 type StageAfterGenerateEffect struct {
-	FailErr string
+	FailErr     string
+	DataSources map[string]interface{}
 }
 
 type StageAfterGenerateCtx struct {
-	Type string
+	Type        string
+	ParentGroup string
+	ParentStage string
+	Stage       string
+	Group       string
 }
 
 func (s *StageAfterGenerate) Execute() error {
@@ -66,5 +75,27 @@ func (s *StageAfterGenerate) Execute() error {
 
 func (s *StageAfterGenerate) Bindings() map[string]interface{} {
 
-	return nil
+	return map[string]interface{}{
+		"_wizard_set_err": func(e string) {
+			s.SideEffect.FailErr = e
+		},
+		"_wizard_set_shared_var": func(name string, data interface{}) {
+			s.SubData.SharedVars[name] = data
+		},
+		"_wizard_get_shared_var": func(name string) interface{} {
+			return s.SubData.SharedVars[name]
+		},
+		"_wizard_get_stage_data": func(name string) interface{} {
+			return s.SubData.Data[name]
+		},
+
+		"_wizard_get_data_source": func(name string) interface{} {
+			return s.SideEffect.DataSources[name]
+		},
+
+		"_wizard_set_data_source": func(name string, data interface{}) {
+			s.SideEffect.DataSources[name] = data
+		},
+	}
+
 }

@@ -16,6 +16,7 @@ type BeforeNextSideEffects struct {
 type BeforeNextCtx struct {
 	Type         string
 	CurrentStage string
+	CurrentGroup string
 	ParentGroup  string
 	ParentStage  string
 }
