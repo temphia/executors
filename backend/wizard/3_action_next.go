@@ -7,6 +7,7 @@ import (
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
 	"github.com/temphia/executors/backend/wizard/lifecycle"
+	"github.com/temphia/executors/backend/wizard/sloader"
 	"github.com/temphia/executors/backend/wizard/wmodels"
 	"github.com/thoas/go-funk"
 )
@@ -172,7 +173,50 @@ func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGr
 		}
 	}
 
-	return nil, nil
+	loader := sloader.SLoader{
+		Binding:     sw.binding,
+		Model:       &sw.model,
+		SubData:     sub,
+		Stage:       stage,
+		Group:       group,
+		DataSources: datasources,
+	}
+
+	err := loader.Process()
+	if err != nil {
+		return nil, err
+	}
+
+	if stage.AfterGenerate != "" {
+		lf := lifecycle.StageAfterGenerate{
+			Models: &sw.model,
+			SideEffects: lifecycle.StageAfterGenerateEffects{
+				DataSources: datasources,
+			},
+			SubData: sub,
+		}
+
+		err := lf.Execute()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	opdata, err := sw.updateSub(sub)
+	if err != nil {
+		return nil, err
+	}
+
+	return wmodels.ResponseNext{
+		StageTitle:  stage.Name,
+		Fields:      stage.Fields,
+		DataSources: datasources,
+		Message:     stage.Message,
+		OpaqueData:  opdata,
+		Ok:          true,
+		Final:       false,
+	}, nil
+
 }
 
 func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodels.Submission) (interface{}, error) {
@@ -182,97 +226,7 @@ func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodel
 /*
 
 
-func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGroup, nStage string) (interface{}, error) {
 
-
-		nstage := sw.model.Stages[nStage]
-		if nstage == nil {
-			pp.Println("@next_stage", nStage)
-			pp.Println("@all_stage", sw.model.Stages)
-			return nil, easyerr.NotFound()
-		}
-
-		eerr := ""
-
-		if group.BeforeNext != "" {
-			binds := map[string]interface{}{
-				"_wizard_set_err": func(e string) {
-					eerr = e
-				},
-
-				"_wizard_set_shared_var": func(name string, data interface{}) {
-					sub.SharedVars[name] = data
-				},
-				"_wizard_get_shared_var": func(name string) interface{} {
-					return sub.SharedVars[name]
-				},
-				"_wizard_get_stage_data": func(name string) interface{} {
-					return sub.Data[name]
-				},
-			}
-
-			err := sw.execScript(nstage.BeforeVerify, nil, binds)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		pp.Println(eerr)
-
-		resp := wmodels.ResponseNext{
-			StageTitle:  nstage.Name,
-			Fields:      nstage.Fields,
-			DataSources: make(map[string]interface{}),
-			Message:     nstage.Message,
-			OpaqueData:  nil,
-			Ok:          true,
-			Final:       false,
-		}
-
-		if nstage.BeforeGenerate != "" {
-			binds := map[string]interface{}{
-				"_wizard_set_err": func(e string) {
-					eerr = e
-				},
-				"_wizard_set_source": func(name string, data interface{}) {
-					resp.DataSources[name] = data
-				},
-				"_wizard_set_shared_var": func(name string, data interface{}) {
-					sub.SharedVars[name] = data
-				},
-				"_wizard_get_shared_var": func(name string) interface{} {
-					return sub.SharedVars[name]
-				},
-				"_wizard_get_stage_data": func(name string) interface{} {
-					return sub.Data[name]
-				},
-			}
-
-			// fixme => pass proper ctx to method
-			err := sw.execScript(nstage.BeforeVerify, nil, binds)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		err := sw.genSource(nstage, sub, resp.DataSources)
-		if err != nil {
-			return nil, err
-		}
-
-		opdata, err := sw.updateSub(sub)
-		if err != nil {
-			return nil, err
-		}
-
-		resp.OpaqueData = opdata
-
-		return resp, nil
-
-
-	return nil, nil
-
-}
 
 func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodels.Submission) (interface{}, error) {
 	// fixme => handle nested stage_group differently

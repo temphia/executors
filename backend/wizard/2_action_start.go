@@ -168,13 +168,18 @@ func (sw *SimpleWizard) runStart(pgroup, pstage, psubid, nextgroup string, execD
 		}
 	}
 
+	opdata, err := sw.updateSub(&subData)
+	if err != nil {
+		return nil, err
+	}
+
 	return &wmodels.ResponseStart{
 		StartStage:  true,
 		StageTitle:  stage.Name,
 		Message:     stage.Message,
 		Fields:      stage.Fields,
 		DataSources: datasources,
-		OpaqueData:  nil,
+		OpaqueData:  opdata,
 		Ok:          true,
 		PrevData:    subData.Data[stage.Name],
 	}, nil
