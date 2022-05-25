@@ -220,62 +220,40 @@ func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGr
 }
 
 func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodels.Submission) (interface{}, error) {
-	return nil, nil
-}
-
-/*
-
-
-
-
-func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodels.Submission) (interface{}, error) {
-	// fixme => handle nested stage_group differently
 
 	if group.BeforeEnd == "" {
-		return wmodels.ResponseFinal{
-			Ok:          true,
-			LastMessage: group.LastMessage,
-			Final:       true,
-		}, nil
+		lf := lifecycle.BeforeEnd{
+			SideEffects: lifecycle.BeforeEndSideEffects{},
+			SubData:     subData,
+		}
+
+		err := lf.Execute()
+		if err != nil {
+			return nil, err
+		}
+
+		if lf.SideEffects.GotoStage != "" {
+			// fixme => gotomessage
+			return sw.generate(subData, group, lf.SideEffects.GotoStage)
+		}
 	}
 
-	eerr := ""
 	msg := group.LastMessage
 
-	binds := map[string]interface{}{
-		"_wizard_set_err": func(e string) {
-			eerr = e
-		},
-		"_wizard_set_shared_var": func(name string, data interface{}) {
-			subData.SharedVars[name] = data
-		},
-		"_wizard_get_shared_var": func(name string) interface{} {
-			return subData.SharedVars[name]
-		},
-		"_wizard_get_stage_data": func(name string) interface{} {
-			return subData.Data[name]
-		},
-		"_wizard_set_message": func(m string) {
-			msg = m
-		},
-	}
+	if group.AfterEnd != "" {
+		lf := lifecycle.AfterEnd{
+			SubData:     subData,
+			SideEffects: lifecycle.AfterEndSideEffects{},
+		}
 
-	// fixme => pass proper ctx to method
-	err := sw.execScript(group.BeforeEnd, nil, binds)
-	if err != nil {
-		return nil, err
-	}
+		err := lf.Execute()
+		if err != nil {
+			return nil, err
+		}
 
-	if err != nil {
-		return nil, err
-	}
-
-	if eerr != "" {
-		return wmodels.ResponseFinal{
-			LastMessage: msg,
-			Ok:          false,
-			Final:       true,
-		}, nil
+		if lf.SideEffects.Message != "" {
+			msg = lf.SideEffects.Message
+		}
 	}
 
 	return wmodels.ResponseFinal{
@@ -284,5 +262,3 @@ func (sw *SimpleWizard) endStageGroup(group *wmodels.StageGroup, subData *wmodel
 		Final:       true,
 	}, nil
 }
-
-*/
