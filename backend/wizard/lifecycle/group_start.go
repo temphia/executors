@@ -57,9 +57,8 @@ type AfterStartCtx struct {
 }
 
 type AfterStartSideEffects struct {
-	FailErr     string
-	PrevData    map[string]map[string]interface{} // map exec_data => prev_data
-	DataSources map[string]interface{}
+	FailErr  string
+	PrevData map[string]map[string]interface{} // map exec_data => prev_data
 }
 
 func (b *AfterStart) Execute() error {

@@ -23,6 +23,10 @@ type StageGroup struct {
 	AfterEnd    string `json:"after_end,omitempty"`
 	BeforeNext  string `json:"before_next,omitempty"`
 	BeforeBack  string `json:"before_back,omitempty"`
+
+	UIBeforeSubmit string `json:"ui_before_submit,omitempty"`
+	UIAfterLoad    string `json:"ui_after_load,omitempty"`
+	UIOnDataChange string `json:"ui_on_data_change,omitempty"`
 }
 
 type Splash struct {
@@ -43,10 +47,6 @@ type Stage struct {
 	AfterGenerate  string   `json:"after_generate,omitempty"`
 	BeforeVerify   string   `json:"before_verify,omitempty"`
 	AfterVerify    string   `json:"after_verify,omitempty"`
-
-	UIBeforeSubmit string `json:"ui_before_submit,omitempty"`
-	UIAfterLoad    string `json:"ui_after_load,omitempty"`
-	UIOnDataChange string `json:"ui_on_data_change,omitempty"`
 }
 
 func (s *Stage) GetField(name string) *Field {
@@ -76,6 +76,11 @@ type Source struct {
 	ExtraMeta map[string]interface{} `json:"extra_meta,omitempty"`
 
 	// auto_cache ? => by_submission by_plug by_user by_stage_group by_stage by_field by_ctx_var_key
+}
+
+type DataSource struct {
+	Data     interface{} `json:"data,omitempty"`
+	LazyLoad bool        `json:"lazyload,omitempty"`
 }
 
 // this will be send as opaque data

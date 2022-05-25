@@ -1,16 +1,16 @@
 package wizard
 
 import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
-	"github.com/temphia/executors/backend/wizard/wmodels"
-	"github.com/thoas/go-funk"
 )
 
 func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
+
+	return nil, nil
+
+}
+
+/*
 
 	// fixme => handle prevdata properly / edit through nested
 
@@ -166,4 +166,5 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 	resp.OpaqueData = opData
 
 	return resp, nil
-}
+
+*/

@@ -30,7 +30,7 @@ func (sw *SimpleWizard) getSplash(hasExecData bool, msg string) (interface{}, er
 	if sw.model.Splash.OnLoad != "" {
 		lf := lifecycle.OnSplashLoad{
 			Models: &sw.model,
-			SideEffect: lifecycle.OnSplashLoadSideEffect{
+			SideEffects: lifecycle.OnSplashLoadSideEffects{
 				FailErr:     "",
 				SkipSplash:  skipSplash,
 				DataSources: map[string]interface{}{},
@@ -43,12 +43,12 @@ func (sw *SimpleWizard) getSplash(hasExecData bool, msg string) (interface{}, er
 			return nil, err
 		}
 
-		if lf.SideEffect.FailErr != "" {
-			return nil, easyerr.Error(lf.SideEffect.FailErr)
+		if lf.SideEffects.FailErr != "" {
+			return nil, easyerr.Error(lf.SideEffects.FailErr)
 		}
 
-		skipSplash = lf.SideEffect.SkipSplash
-		dataSources = lf.SideEffect.DataSources
+		skipSplash = lf.SideEffects.SkipSplash
+		dataSources = lf.SideEffects.DataSources
 	}
 
 	return wmodels.ResponseSplash{

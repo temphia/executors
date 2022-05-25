@@ -29,6 +29,15 @@ type SLoader struct {
 func (s *SLoader) Process() error {
 
 	for _, field := range s.Stage.Fields {
+		if field.Source == "" {
+			continue
+		}
+
+		_, ok := s.DataSources[field.Source]
+		if ok {
+			continue
+		}
+
 		source := s.Model.Sources[field.Source]
 		if source == nil {
 			return easyerr.NotFound()

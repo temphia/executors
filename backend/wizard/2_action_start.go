@@ -24,10 +24,10 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 	if sw.model.Splash.OnSubmit != "" {
 
 		lf := lifecycle.OnSplashSubmit{
-			Models:     &sw.model,
-			SideEffect: lifecycle.OnSplashSubmitSideEffect{},
-			SubmitData: req.SplashData,
-			ExecData:   req.StartRawData,
+			Models:      &sw.model,
+			SideEffects: lifecycle.OnSplashSubmitSideEffects{},
+			SubmitData:  req.SplashData,
+			ExecData:    req.StartRawData,
 		}
 
 		err := lf.Execute()
@@ -35,7 +35,7 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 			return nil, err
 		}
 
-		if !lf.SideEffect.SkipValidation {
+		if !lf.SideEffects.SkipValidation {
 			for _, field := range sw.model.Splash.Fields {
 				_, ok := req.SplashData[field.Name]
 				if !ok && field.Optional {
@@ -103,15 +103,12 @@ func (sw *SimpleWizard) runStart(pgroup, pstage, psubid, nextgroup string, execD
 	}
 
 	subData := wmodels.NewSub(pgroup, pstage, psubid, sg.Name, stage.Name)
-	datasources := make(map[string]interface{})
 
 	if sg.AfterStart != "" {
 		lf := lifecycle.AfterStart{
-			SubData: &subData,
-			SideEffects: lifecycle.AfterStartSideEffects{
-				DataSources: datasources,
-			},
-			ExecData: execData,
+			SubData:     &subData,
+			SideEffects: lifecycle.AfterStartSideEffects{},
+			ExecData:    execData,
 		}
 
 		err := lf.Execute()
@@ -125,11 +122,12 @@ func (sw *SimpleWizard) runStart(pgroup, pstage, psubid, nextgroup string, execD
 		}
 	}
 
+	datasources := make(map[string]interface{})
 	if stage.BeforeGenerate != "" {
 		lf := lifecycle.StageBeforeGenerate{
 			Models:  &sw.model,
 			SubData: &subData,
-			SideEffect: lifecycle.StageBeforeGenerateEffect{
+			SideEffects: lifecycle.StageBeforeGenerateEffects{
 				FailErr:     "",
 				DataSources: datasources,
 			},
@@ -157,9 +155,11 @@ func (sw *SimpleWizard) runStart(pgroup, pstage, psubid, nextgroup string, execD
 
 	if stage.AfterGenerate != "" {
 		lf := lifecycle.StageAfterGenerate{
-			Models:     &sw.model,
-			SideEffect: lifecycle.StageAfterGenerateEffect{},
-			SubData:    &subData,
+			Models: &sw.model,
+			SideEffects: lifecycle.StageAfterGenerateEffects{
+				DataSources: datasources,
+			},
+			SubData: &subData,
 		}
 
 		err := lf.Execute()

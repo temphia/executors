@@ -11,6 +11,8 @@ type BeforeNext struct {
 type BeforeNextSideEffects struct {
 	FailErr   string
 	NextStage string
+	Errors    map[string]string
+	SkipCheck []string
 }
 
 type BeforeNextCtx struct {
@@ -27,6 +29,17 @@ func (b *BeforeNext) Execute() error { return nil }
 func (b *BeforeNext) Bindings() map[string]interface{} {
 
 	return map[string]interface{}{
+		"_wizard_set_field_err": func(field, e string) {
+			b.SideEffects.Errors[field] = e
+		},
+
+		"_wizard_skip_field_check": func(field string) {
+			if b.SideEffects.SkipCheck == nil {
+				b.SideEffects.SkipCheck = []string{field}
+				return
+			}
+			b.SideEffects.SkipCheck = append(b.SideEffects.SkipCheck, field)
+		},
 
 		"_wizard_set_shared_var": func(name string, data interface{}) {
 			b.SubData.SharedVars[name] = data
