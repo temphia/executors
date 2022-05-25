@@ -8,6 +8,9 @@ import (
 
 type BeforeStart struct {
 	SideEffects BeforeStartSideEffects
+	ParentGroup string
+	ParentStage string
+	ExecData    interface{}
 }
 
 type BeforeStartSideEffects struct {
@@ -41,19 +44,22 @@ func (b *BeforeStart) Bindings() map[string]interface{} {
 type AfterStart struct {
 	SideEffects AfterStartSideEffects
 	SubData     *wmodels.Submission
+	ExecData    interface{}
 }
 
 type AfterStartCtx struct {
+	Type        string
 	ParentGroup string
 	ParentStage string
+	ParentSubId string
 	SubId       string
 	ExecData    interface{}
-	DataSources map[string]interface{}
 }
 
 type AfterStartSideEffects struct {
-	FailErr  string
-	PrevData map[string]interface{} // map exec_data => prev_data
+	FailErr     string
+	PrevData    map[string]map[string]interface{} // map exec_data => prev_data
+	DataSources map[string]interface{}
 }
 
 func (b *AfterStart) Execute() error {
@@ -64,14 +70,27 @@ func (b *AfterStart) Execute() error {
 func (b *AfterStart) Bindings() map[string]interface{} {
 
 	return map[string]interface{}{
-		"_wizard_set_prev_data_field": func(field string, value interface{}) {
+		"_wizard_set_prev_data_field": func(stage, field string, value interface{}) {
 			if b.SideEffects.PrevData == nil {
-				b.SideEffects.PrevData = make(map[string]interface{})
+				b.SideEffects.PrevData = make(map[string]map[string]interface{})
 			}
-			b.SideEffects.PrevData[field] = value
+
+			spd := b.SideEffects.PrevData[stage]
+			if spd == nil {
+				spd = make(map[string]interface{})
+				b.SideEffects.PrevData[stage] = spd
+			}
+			spd[field] = value
 		},
 
-		"_wizard_set_prev_data": func(pdata map[string]interface{}) {
+		"_wizard_set_prev_data_stage": func(stage string, pdata map[string]interface{}) {
+			if b.SideEffects.PrevData == nil {
+				b.SideEffects.PrevData = make(map[string]map[string]interface{})
+			}
+			b.SideEffects.PrevData[stage] = pdata
+		},
+
+		"_wizard_set_prev_data": func(pdata map[string]map[string]interface{}) {
 			b.SideEffects.PrevData = pdata
 		},
 

@@ -6,66 +6,57 @@ import (
 
 	"github.com/temphia/core/backend/server/btypes/easyerr"
 	"github.com/temphia/core/backend/server/btypes/rtypes/event"
+	"github.com/temphia/executors/backend/wizard/lifecycle"
+	"github.com/temphia/executors/backend/wizard/sloader"
 	"github.com/temphia/executors/backend/wizard/wmodels"
 )
 
 func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 
-	data1 := wmodels.RequestStart{}
-	err := json.Unmarshal(ev.Data, &data1)
+	req := wmodels.RequestStart{}
+	err := json.Unmarshal(ev.Data, &req)
 	if err != nil {
 		return nil, err
 	}
 
-	nextStageGroup := ""
-	nextStage := ""
-	eerr := ""
-	skipValidation := false
+	nextgroup := ""
 
-	if sw.model.Splash.BeforeValidate != "" {
+	if sw.model.Splash.OnSubmit != "" {
 
-		binds := map[string]interface{}{
-			"_wizard_set_next_stage_group": func(name string) {
-				nextStageGroup = name
-			},
-			"_wizard_set_next_stage": func(name string) {
-				nextStage = name
-			},
-			"_wizard_set_err": func(name string) {
-				eerr = name
-			},
-			"_wizard_skip_validation": func() {
-				skipValidation = true
-			},
+		lf := lifecycle.OnSplashSubmit{
+			Models:     &sw.model,
+			SideEffect: lifecycle.OnSplashSubmitSideEffect{},
+			SubmitData: req.SplashData,
+			ExecData:   req.StartRawData,
 		}
 
-		err = sw.execScript(sw.model.Splash.BeforeValidate, data1, binds)
+		err := lf.Execute()
 		if err != nil {
 			return nil, err
 		}
-	}
 
-	if eerr != "" {
-		return sw.GetSplash(ev, eerr)
-	}
-
-	if !skipValidation {
-		for _, field := range sw.model.Splash.Fields {
-			_, ok := data1.SplashData[field.Name]
-			if !ok && field.Optional {
-				continue
-			}
-			// fixme actually check data
-			if !ok {
-				return sw.GetSplash(ev, fmt.Sprintf("Empty required field: %s", field.Name))
+		if !lf.SideEffect.SkipValidation {
+			for _, field := range sw.model.Splash.Fields {
+				_, ok := req.SplashData[field.Name]
+				if !ok && field.Optional {
+					continue
+				}
+				// fixme actually check data
+				if !ok {
+					return sw.getSplash(req.StartRawData != nil, fmt.Sprintf("Empty required field: %s", field.Name))
+				}
 			}
 		}
 	}
+	return sw.runStart("", "", "", nextgroup, req.StartRawData)
+}
+
+func (sw *SimpleWizard) runStart(pgroup, pstage, psubid, nextgroup string, execData interface{}) (interface{}, error) {
 
 	var sg *wmodels.StageGroup
-	if nextStageGroup != "" {
+	if nextgroup != "" {
 		for _, _sg := range sw.model.StageGroups {
-			if _sg.Name == nextStageGroup {
+			if _sg.Name == nextgroup {
 				sg = &_sg
 			}
 		}
@@ -74,89 +65,118 @@ func (sw *SimpleWizard) RunStart(ev *event.Request) (interface{}, error) {
 	}
 
 	if sg == nil {
-		ev.Data = nil
-		return sw.GetSplash(ev, fmt.Sprintf("Stage Group not found: %s", nextStageGroup))
+		return nil, easyerr.Error("Stage Group not found")
 	}
 
-	if sg.BeforeStart != "" {
+	nextStage := ""
 
-		binds := map[string]interface{}{
-			"_wizard_set_next_stage": func(name string) {
-				nextStage = name
-			},
-			"_wizard_set_err": func(name string) {
-				eerr = name
-			},
+	if sg.BeforeStart != "" {
+		lf := lifecycle.BeforeStart{
+			SideEffects: lifecycle.BeforeStartSideEffects{},
+			ParentGroup: pgroup,
+			ParentStage: pstage,
+			ExecData:    execData,
 		}
 
-		err := sw.execScript(sg.BeforeStart, data1.SplashData, binds)
+		err := lf.Execute()
+
 		if err != nil {
 			return nil, err
 		}
-	}
 
-	if eerr != "" {
-		ev.Data = nil
-		return sw.GetSplash(ev, eerr)
+		nextStage = lf.SideEffects.NextStage
 	}
 
 	var stage *wmodels.Stage
-
 	if nextStage != "" {
 		_stage, ok := sw.model.Stages[nextStage]
 		if !ok {
-			return sw.GetSplash(ev, fmt.Sprintf("Stage not found: %s", nextStage))
+			return nil, easyerr.Error("stage not found")
 		}
 		stage = _stage
 	} else {
 		stage = sw.model.Stages[sg.Stages[0]]
 	}
 
-	subData := wmodels.NewSub(sg.Name, stage.Name)
-
-	resp := &wmodels.ResponseStart{
-		StartStage:  true,
-		StageTitle:  stage.Name,
-		Message:     stage.Message,
-		Fields:      stage.Fields,
-		DataSources: make(map[string]interface{}),
-		OpaqueData:  nil,
-		Ok:          true,
+	if stage == nil {
+		return nil, easyerr.Error("Stage not found")
 	}
 
-	eerr = ""
-	if stage.BeforeGenerate != "" {
-		binds := map[string]interface{}{
-			"_wizard_err": func(e string) {
-				eerr = e
+	subData := wmodels.NewSub(pgroup, pstage, psubid, sg.Name, stage.Name)
+	datasources := make(map[string]interface{})
+
+	if sg.AfterStart != "" {
+		lf := lifecycle.AfterStart{
+			SubData: &subData,
+			SideEffects: lifecycle.AfterStartSideEffects{
+				DataSources: datasources,
 			},
-			"_wizard_set_source_data": func(source string, data interface{}) {
-				resp.DataSources[source] = data
-			},
+			ExecData: execData,
 		}
 
-		err := sw.execScript(sg.BeforeStart, nil, binds)
+		err := lf.Execute()
+
 		if err != nil {
 			return nil, err
 		}
 
-		if eerr != "" {
-
-			return nil, easyerr.Error(eerr)
+		if lf.SideEffects.PrevData != nil {
+			subData.Data = lf.SideEffects.PrevData
 		}
 	}
 
-	err = sw.genSource(stage, &subData, resp.DataSources)
+	if stage.BeforeGenerate != "" {
+		lf := lifecycle.StageBeforeGenerate{
+			Models:  &sw.model,
+			SubData: &subData,
+			SideEffect: lifecycle.StageBeforeGenerateEffect{
+				FailErr:     "",
+				DataSources: datasources,
+			},
+		}
+
+		err := lf.Execute()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	loader := sloader.SLoader{
+		Binding:     sw.binding,
+		Model:       &sw.model,
+		SubData:     &subData,
+		Stage:       stage,
+		Group:       sg,
+		DataSources: datasources,
+	}
+
+	err := loader.Process()
 	if err != nil {
 		return nil, err
 	}
 
-	opData, err := sw.updateSub(&subData)
-	if err != nil {
-		return nil, err
+	if stage.AfterGenerate != "" {
+		lf := lifecycle.StageAfterGenerate{
+			Models:     &sw.model,
+			SideEffect: lifecycle.StageAfterGenerateEffect{},
+			SubData:    &subData,
+		}
+
+		err := lf.Execute()
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	resp.OpaqueData = opData
+	return &wmodels.ResponseStart{
+		StartStage:  true,
+		StageTitle:  stage.Name,
+		Message:     stage.Message,
+		Fields:      stage.Fields,
+		DataSources: datasources,
+		OpaqueData:  nil,
+		Ok:          true,
+		PrevData:    subData.Data[stage.Name],
+	}, nil
 
-	return resp, nil
 }

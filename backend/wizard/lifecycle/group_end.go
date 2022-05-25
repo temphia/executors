@@ -19,6 +19,7 @@ type BeforeEndCtx struct {
 	Type        string
 	ParentGroup string
 	ParentStage string
+	ParentSubId string
 }
 
 func (b *BeforeEnd) Execute() error                   { return nil }

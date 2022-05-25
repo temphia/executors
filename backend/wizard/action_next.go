@@ -34,7 +34,7 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 	skipChecks := make(map[string]struct{})
 	eerr := ""
 
-	if stage.BeforeValidate != "" {
+	if stage.BeforeVerify != "" {
 		binds := map[string]interface{}{
 			"_wizard_set_err": func(e string) {
 				eerr = e
@@ -62,7 +62,7 @@ func (sw *SimpleWizard) RunNext(ev *event.Request) (interface{}, error) {
 			},
 		}
 
-		err := sw.execScript(stage.BeforeValidate, req.Data, binds)
+		err := sw.execScript(stage.BeforeVerify, req.Data, binds)
 		if err != nil {
 			return nil, err
 		}
@@ -138,7 +138,7 @@ func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGr
 
 	eerr := ""
 
-	if group.OnNext != "" {
+	if group.BeforeNext != "" {
 		binds := map[string]interface{}{
 			"_wizard_set_err": func(e string) {
 				eerr = e
@@ -155,7 +155,7 @@ func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGr
 			},
 		}
 
-		err := sw.execScript(nstage.BeforeValidate, nil, binds)
+		err := sw.execScript(nstage.BeforeVerify, nil, binds)
 		if err != nil {
 			return nil, err
 		}
@@ -193,7 +193,7 @@ func (sw *SimpleWizard) generate(sub *wmodels.Submission, group *wmodels.StageGr
 		}
 
 		// fixme => pass proper ctx to method
-		err := sw.execScript(nstage.BeforeValidate, nil, binds)
+		err := sw.execScript(nstage.BeforeVerify, nil, binds)
 		if err != nil {
 			return nil, err
 		}

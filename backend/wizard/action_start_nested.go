@@ -119,7 +119,7 @@ func (sw *SimpleWizard) RunNestedStart(ev *event.Request) (interface{}, error) {
 		stage = sw.model.Stages[ngroup.Stages[0]]
 	}
 
-	subData := wmodels.NewSub(ngroup.Name, stage.Name)
+	subData := wmodels.NewSub("", "", "", ngroup.Name, stage.Name)
 
 	resp := &wmodels.ResponseStart{
 		StartStage:  true,

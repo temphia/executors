@@ -21,8 +21,10 @@ type StageBeforeVerifyEffect struct {
 
 type StageBeforeVerifyCtx struct {
 	Type        string
+	ParentSubId string
 	ParentGroup string
 	ParentStage string
+	SubId       string
 	Stage       string
 	Group       string
 }

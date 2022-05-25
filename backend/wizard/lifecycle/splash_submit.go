@@ -5,6 +5,8 @@ import "github.com/temphia/executors/backend/wizard/wmodels"
 type OnSplashSubmit struct {
 	Models     *wmodels.Wizard
 	SideEffect OnSplashSubmitSideEffect
+	SubmitData map[string]interface{}
+	ExecData   interface{}
 }
 
 type OnSplashSubmitSideEffect struct {

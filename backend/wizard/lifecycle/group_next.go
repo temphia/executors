@@ -17,6 +17,7 @@ type BeforeNextCtx struct {
 	Type         string
 	CurrentStage string
 	CurrentGroup string
+	ParentSubId  string
 	ParentGroup  string
 	ParentStage  string
 }

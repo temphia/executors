@@ -16,27 +16,37 @@ type StageGroup struct {
 	Stages      []string `json:"stages,omitempty"`
 	LastMessage string   `json:"last_message,omitempty"`
 	PreventBack bool     `json:"prevent_back,omitempty"`
-	OnNext      string   `json:"on_next,omitempty"`
-	BeforeStart string   `json:"before_start,omitempty"`
-	BeforeEnd   string   `json:"before_end,omitempty"`
-	AfterEnd    string   `json:"after_end,omitempty"`
+
+	BeforeStart string `json:"before_start,omitempty"`
+	AfterStart  string `json:"after_start,omitempty"`
+	BeforeEnd   string `json:"before_end,omitempty"`
+	AfterEnd    string `json:"after_end,omitempty"`
+	BeforeNext  string `json:"before_next,omitempty"`
+	BeforeBack  string `json:"before_back,omitempty"`
 }
 
 type Splash struct {
-	Message        string   `json:"message,omitempty"`
-	Fields         []*Field `json:"fields,omitempty"`
-	Skip           bool     `json:"skip,omitempty"`
-	BeforeGenerate string   `json:"before_generate,omitempty"`
-	BeforeValidate string   `json:"before_validate,omitempty"`
+	Message  string   `json:"message,omitempty"`
+	Fields   []*Field `json:"fields,omitempty"`
+	Skip     bool     `json:"skip,omitempty"`
+	OnLoad   string   `json:"on_load,omitempty"`
+	OnSubmit string   `json:"on_submit,omitempty"`
 }
+
+// fixme => allow only "determisnistic" kinds of bindings
 
 type Stage struct {
 	Name           string   `json:"name,omitempty"`
 	Message        string   `json:"message,omitempty"`
 	Fields         []*Field `json:"fields,omitempty"`
-	BeforeGenerate string   `json:"before_generate,omitempty"` // fixme => allow only "determisnistic" kinds of bindings
-	BeforeValidate string   `json:"before_validate,omitempty"`
-	BeforeBack     string   `json:"before_back,omitempty"`
+	BeforeGenerate string   `json:"before_generate,omitempty"`
+	AfterGenerate  string   `json:"after_generate,omitempty"`
+	BeforeVerify   string   `json:"before_verify,omitempty"`
+	AfterVerify    string   `json:"after_verify,omitempty"`
+
+	UIBeforeSubmit string `json:"ui_before_submit,omitempty"`
+	UIAfterLoad    string `json:"ui_after_load,omitempty"`
+	UIOnDataChange string `json:"ui_on_data_change,omitempty"`
 }
 
 func (s *Stage) GetField(name string) *Field {
@@ -75,20 +85,23 @@ type Submission struct {
 	CurrentStage     string                            `json:"curr_stage,omitempty"`
 	Data             map[string]map[string]interface{} `json:"data,omitempty"` // all stage data
 	SharedVars       map[string]interface{}            `json:"shared_vars,omitempty"`
+	ParentSubId      string                            `json:"parent_subid,omitempty"`
 	ParentStageGroup string                            `json:"parent_stage_group,omitempty"` // incase of nested group
 	ParentStage      string                            `json:"parent_stage,omitempty"`
 	VisitedStages    []string                          `json:"visited_stages,omitempty"`
 }
 
-func NewSub(group, stage string) Submission {
+func NewSub(pgroup, pstage, psubid, group, stage string) Submission {
 	return Submission{
 		Id:               xid.New().String(),
 		StageGroup:       group,
 		CurrentStage:     stage,
 		Data:             make(map[string]map[string]interface{}),
 		SharedVars:       make(map[string]interface{}),
-		ParentStageGroup: "",
-		ParentStage:      "",
+		ParentStageGroup: pgroup,
+		ParentStage:      pstage,
+		ParentSubId:      psubid,
 		VisitedStages:    []string{},
 	}
+
 }

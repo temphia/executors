@@ -16,7 +16,11 @@ type StageBeforeGenerateEffect struct {
 }
 
 type StageBeforeGenerateCtx struct {
-	Type string
+	Type        string
+	ParentSubId string
+	ParentGroup string
+	ParentStage string
+	SubId       string
 }
 
 func (s *StageBeforeGenerate) Execute() error {
@@ -63,6 +67,7 @@ type StageAfterGenerateEffect struct {
 
 type StageAfterGenerateCtx struct {
 	Type        string
+	ParentSubId string
 	ParentGroup string
 	ParentStage string
 	Stage       string
