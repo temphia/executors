@@ -7,9 +7,9 @@ import (
 // before
 
 type StageBeforeVerify struct {
-	Models     *wmodels.Wizard
-	SideEffect StageBeforeVerifyEffect
-	SubData    *wmodels.Submission
+	Models      *wmodels.Wizard
+	SideEffects StageBeforeVerifyEffect
+	SubData     *wmodels.Submission
 }
 
 type StageBeforeVerifyEffect struct {
@@ -37,17 +37,21 @@ func (s *StageBeforeVerify) Bindings() map[string]interface{} {
 
 	return map[string]interface{}{
 		"_wizard_set_err": func(e string) {
-			s.SideEffect.FailErr = e
+			s.SideEffects.FailErr = e
 		},
 		"_wizard_set_field_err": func(field, e string) {
-			s.SideEffect.Errors[field] = e
+			s.SideEffects.Errors[field] = e
 		},
 
 		"_wizard_skip_field_check": func(field string) {
-			s.SideEffect.SkipCheck = append(s.SideEffect.SkipCheck, field)
+			if s.SideEffects.SkipCheck == nil {
+				s.SideEffects.SkipCheck = []string{field}
+				return
+			}
+			s.SideEffects.SkipCheck = append(s.SideEffects.SkipCheck, field)
 		},
 		"_wizard_set_next_stage": func(name string) {
-			s.SideEffect.NextStage = name
+			s.SideEffects.NextStage = name
 		},
 		"_wizard_set_shared_var": func(name string, data interface{}) {
 			s.SubData.SharedVars[name] = data

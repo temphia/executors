@@ -5,12 +5,12 @@ import "github.com/temphia/executors/backend/wizard/wmodels"
 // before
 
 type StageBeforeGenerate struct {
-	Models     *wmodels.Wizard
-	SideEffect StageBeforeGenerateEffect
-	SubData    *wmodels.Submission
+	Models      *wmodels.Wizard
+	SideEffects StageBeforeGenerateEffects
+	SubData     *wmodels.Submission
 }
 
-type StageBeforeGenerateEffect struct {
+type StageBeforeGenerateEffects struct {
 	FailErr     string
 	DataSources map[string]interface{}
 }
@@ -31,7 +31,7 @@ func (s *StageBeforeGenerate) Bindings() map[string]interface{} {
 
 	return map[string]interface{}{
 		"_wizard_set_err": func(e string) {
-			s.SideEffect.FailErr = e
+			s.SideEffects.FailErr = e
 		},
 		"_wizard_set_shared_var": func(name string, data interface{}) {
 			s.SubData.SharedVars[name] = data
@@ -43,10 +43,10 @@ func (s *StageBeforeGenerate) Bindings() map[string]interface{} {
 			return s.SubData.Data[name]
 		},
 		"_wizard_get_data_source": func(name string) interface{} {
-			return s.SideEffect.DataSources[name]
+			return s.SideEffects.DataSources[name]
 		},
 		"_wizard_set_data_source": func(name string, data interface{}) {
-			s.SideEffect.DataSources[name] = data
+			s.SideEffects.DataSources[name] = data
 		},
 	}
 
@@ -55,12 +55,12 @@ func (s *StageBeforeGenerate) Bindings() map[string]interface{} {
 // after
 
 type StageAfterGenerate struct {
-	Models     *wmodels.Wizard
-	SideEffect StageAfterGenerateEffect
-	SubData    *wmodels.Submission
+	Models      *wmodels.Wizard
+	SideEffects StageAfterGenerateEffects
+	SubData     *wmodels.Submission
 }
 
-type StageAfterGenerateEffect struct {
+type StageAfterGenerateEffects struct {
 	FailErr     string
 	DataSources map[string]interface{}
 }
@@ -82,7 +82,7 @@ func (s *StageAfterGenerate) Bindings() map[string]interface{} {
 
 	return map[string]interface{}{
 		"_wizard_set_err": func(e string) {
-			s.SideEffect.FailErr = e
+			s.SideEffects.FailErr = e
 		},
 		"_wizard_set_shared_var": func(name string, data interface{}) {
 			s.SubData.SharedVars[name] = data
@@ -95,11 +95,11 @@ func (s *StageAfterGenerate) Bindings() map[string]interface{} {
 		},
 
 		"_wizard_get_data_source": func(name string) interface{} {
-			return s.SideEffect.DataSources[name]
+			return s.SideEffects.DataSources[name]
 		},
 
 		"_wizard_set_data_source": func(name string, data interface{}) {
-			s.SideEffect.DataSources[name] = data
+			s.SideEffects.DataSources[name] = data
 		},
 	}
 
